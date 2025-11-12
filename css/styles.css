@@ -1,0 +1,113 @@
+:root{
+  --cor-fundo:#EDF1F8;
+  --cor-texto:#1F4B8C;
+  --cor-hover:#163a6c;
+  --altura-header:147px;
+  --largura-logo:111px;
+  --altura-logo:81px;
+  --padding-lateral:70px;
+  --gap-itens:48px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;
+  background:var(--cor-fundo);
+}
+
+/* HEADER GERAL */
+.cabecalho-site{
+  position:sticky;
+  top:0;
+  width:100%;
+  height:var(--altura-header);
+  background:var(--cor-fundo);
+  z-index:1000;
+  display:flex;
+  justify-content:center;
+}
+
+.conteudo-cabecalho{
+  width:100%;
+  max-width:2000px;
+  height:100%;
+  padding:0 var(--padding-lateral);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* LOGO À ESQUERDA (centralizado no eixo Y) */
+.area-logotipo{
+  display:flex;
+  align-items:center;
+}
+.logotipo{
+  width:var(--largura-logo);
+  height:var(--altura-logo);
+  object-fit:contain;
+}
+
+/* MENU + ÍCONE À DIREITA, LADO A LADO */
+.area-menu{
+  display:flex;
+  align-items:center;
+  gap:32px;
+}
+
+/* ITENS DO MENU (SOBRE / PARCERIAS / MAIS) */
+.menu-navegacao{
+  display:flex;
+  align-items:center;
+  gap:var(--gap-itens);
+}
+.item-menu{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  color:var(--cor-texto);
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:.02em;
+  padding:4px 0;
+}
+.item-menu:hover{
+  color:var(--cor-hover);
+}
+
+/* ÍCONE DE 3 BARRAS (sempre visível, à direita dos textos) */
+.icone-menu{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+}
+
+/* RESPONSIVO: MENU ABRE ABAIXO EM COLUNA */
+@media(max-width:750px){
+  .conteudo-cabecalho{
+    padding:0 24px;
+  }
+
+  .menu-navegacao{
+    display:none;
+    position:absolute;
+    top:var(--altura-header);
+    left:0;
+    right:0;
+    background:var(--cor-fundo);
+    padding:16px 24px 24px;
+    flex-direction:column;
+    gap:16px;
+    border-top:1px solid rgba(0,0,0,.05);
+  }
+
+  .cabecalho-aberto .menu-navegacao{
+    display:flex;
+  }
+}
