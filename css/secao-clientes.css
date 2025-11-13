@@ -1,0 +1,103 @@
+/* css/secao-clientes.css */
+.secao-clientes{
+  padding:40px 70px 80px;
+}
+
+.container-clientes{
+  max-width:1400px;
+  margin:0 auto;
+  border-radius:32px;
+  background:#EDF1F8;
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+  padding:32px 0 40px;
+}
+
+.titulo-clientes{
+  margin:0;
+  font-weight:700;
+  font-size:46px;
+  color:#111111;
+  text-align:center;
+}
+
+/* faixa com padding externo (espaço até as bordas) */
+.faixa-clientes{
+  overflow:hidden;
+  width:100%;
+  display:flex;
+  padding:0 32px;
+}
+
+/* cada lista é um “bloco” duplicado para loop infinito */
+.lista-clientes{
+  display:flex;
+  gap:24px;     /* espaçamento padrão entre os cards */
+  padding:0;
+  margin:0;
+}
+
+/* espaço entre o final da 1ª lista e o início da 2ª = mesmo gap */
+.faixa-clientes .lista-clientes + .lista-clientes{
+  margin-left:24px;
+}
+
+/* cards dos clientes (azuis) */
+.item-cliente{
+  width:240px;
+  height:240px;
+  border-radius:26px;
+  background:#1F4B8C;
+  flex-shrink:0;
+}
+
+/* animações */
+.faixa-clientes-superior .lista-clientes{
+  animation:clientes-esquerda 27s linear infinite;
+}
+.faixa-clientes-inferior .lista-clientes{
+  animation:clientes-direita 27s linear infinite;
+}
+
+@keyframes clientes-esquerda{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-100%)}
+}
+@keyframes clientes-direita{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(0)}
+}
+
+/* responsivo */
+@media(max-width:900px){
+  .secao-clientes{
+    padding:32px 24px 64px;
+  }
+
+  .container-clientes{
+    border-radius:24px;
+    padding:24px 0 32px;
+  }
+
+  .titulo-clientes{
+    font-size:26px;
+  }
+
+  .faixa-clientes{
+    padding:0 24px;
+  }
+
+  .lista-clientes{
+    gap:24px;
+  }
+
+  .faixa-clientes .lista-clientes + .lista-clientes{
+    margin-left:24px;
+  }
+
+  .item-cliente{
+    width:260px;
+    height:120px;
+  }
+}
