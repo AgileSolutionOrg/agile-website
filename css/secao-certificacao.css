@@ -1,0 +1,63 @@
+/* css/secao-certificacao.css */
+.secao-certificacao{
+  padding:40px 70px 80px;
+}
+
+.conteudo-certificacao{
+  max-width:1400px;
+  margin:0 auto;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+}
+
+.titulo-certificacao{
+  margin:0;
+  font-weight:700;
+  font-size:46px;
+  color:#111111;
+}
+
+.subtitulo-certificacao{
+  margin:0;
+  font-weight:500;
+  font-size:18px;
+  color:#333333;
+}
+
+/* Grid dos certificados */
+.grid-certificados{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  margin-top:16px;
+}
+
+/* Card azul (placeholder) */
+.card-certificado{
+  width:100%;
+  aspect-ratio: 4 / 3;         /* mantém proporção certinha */
+  border-radius:32px;
+  background:#1F4B8C;          /* azul da paleta */
+}
+
+/* Responsivo */
+@media(max-width:900px){
+  .secao-certificacao{
+    padding:32px 24px 64px;
+  }
+
+  .conteudo-certificacao{
+    gap:24px;
+  }
+
+  .titulo-certificacao{
+    font-size:32px;
+  }
+
+  .grid-certificados{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+}
