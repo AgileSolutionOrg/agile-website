@@ -1,0 +1,77 @@
+/* css/secao-tecnologias.css */
+.secao-tecnologias{
+  padding:40px 70px 80px;
+}
+
+.container-tecnologias{
+  max-width:1400px;
+  margin:0 auto;
+  background:#1A202C;
+  border-radius:64px;
+  padding:80px 90px 80px;
+  color:#E2E8F0;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+}
+
+.titulo-tecnologias{
+  margin:0;
+  font-weight:700;
+  font-size:40px;
+  line-height:120%;
+}
+
+/* === GRID 5 por linha + tamanho fixo dos itens === */
+.lista-tecnologias{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  justify-items:center;
+  gap:21px 0px;
+  margin-top:16px;
+}
+
+.item-tecnologia{
+  width:190px;          /* FIXO */
+  height:45px;          /* FIXO */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:22px;
+  border:2px solid #1F4B8C;
+  background:#1A202C;
+
+  color:#E2E8F0;
+  font-weight:500;
+  font-size:14px;
+  white-space:nowrap;
+
+  transition:0.2s;
+}
+
+.item-tecnologia:hover{
+  border-color:#1F4B8C;
+  background:linear-gradient(90deg, #1F4B8C 0%, #1A202C 80%);
+}
+
+
+/* === MOBILE: empilha, aumenta gap, mas mantém tamanho fixo === */
+@media(max-width:900px){
+  .secao-tecnologias{
+    padding:32px 24px 64px;
+  }
+
+  .container-tecnologias{
+    padding:32px 20px 40px;
+  }
+
+  .lista-tecnologias{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+
+  .item-tecnologia{
+    margin:0 auto;  /* centralizado no mobile */
+  }
+}

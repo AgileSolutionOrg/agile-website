@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-br">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,7 +10,9 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/secao-principal.css">
   <link rel="stylesheet" href="css/secao-servicos.css">
+  <link rel="stylesheet" href="css/secao-tecnologias.css">
 </head>
+
 <body>
   <header class="cabecalho-site" data-cabecalho>
     <div class="conteudo-cabecalho">
@@ -24,11 +27,12 @@
           <button class="item-menu" data-ir="parcerias">PARCERIAS</button>
           <button class="item-menu" data-ir="mais">MAIS</button>
         </nav>
-        <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false" aria-label="Abrir menu">
+        <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false"
+          aria-label="Abrir menu">
           <svg width="22" height="16" viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg">
-            <rect width="22" height="2" y="0" fill="#1F4B8C"/>
-            <rect width="22" height="2" y="7" fill="#1F4B8C"/>
-            <rect width="22" height="2" y="14" fill="#1F4B8C"/>
+            <rect width="22" height="2" y="0" fill="#1F4B8C" />
+            <rect width="22" height="2" y="7" fill="#1F4B8C" />
+            <rect width="22" height="2" y="14" fill="#1F4B8C" />
           </svg>
         </button>
       </div>
@@ -36,7 +40,7 @@
   </header>
 
   <main>
-    <section class="secao-principal">
+    <section class="secao-principal" id="sobre">
       <div class="conteudo-secao-principal">
         <div class="coluna-texto-principal">
           <h1 class="titulo-principal">
@@ -55,9 +59,8 @@
       </div>
     </section>
 
-    
 
-    <section class="secao-servicos" id="sobre">
+    <section class="secao-servicos">
       <div class="container-servicos">
         <div class="cabecalho-servicos">
           <h2 class="titulo-servicos">Desenvolvimento de softwares</h2>
@@ -103,7 +106,7 @@
           <p class="subtitulo-principal">
             Um serviço que a Agile Solution possui, que permite a automação de tarefas repetitivas.
             O Agile Robot foi criado, desenhado e desenvolvido como um personagem robô que facilita
-            e agiliza a sua rotina. Pensado para ser o seu braço direito em tarefas do dia a dia,
+            e agiliza sua rotina. Pensado para ser o seu braço direito em tarefas do dia a dia,
             ele pode ser personalizado para sua empresa, cuidando das tarefas repetitivas.
           </p>
           <button class="botao-principal">Saber mais</button>
@@ -113,6 +116,54 @@
         </div>
       </div>
     </section>
+    <section class="secao-tecnologias">
+      <div class="container-tecnologias">
+        <h2 class="titulo-tecnologias">Tecnologias utilizadas</h2>
+
+        <div class="lista-tecnologias">
+          <span class="item-tecnologia">Oracle Forms</span>
+          <span class="item-tecnologia">Oracle APEX</span>
+          <span class="item-tecnologia">JavaScript</span>
+          <span class="item-tecnologia">Java</span>
+          <span class="item-tecnologia">Oracle Reports</span>
+          <span class="item-tecnologia">OTMSuite</span>
+          <span class="item-tecnologia">Python</span>
+          <span class="item-tecnologia">Angular</span>
+          <span class="item-tecnologia">Oracle PL/SQL</span>
+          <span class="item-tecnologia">Power BI</span>
+        </div>
+      </div>
+    </section>
+    <section class="secao-principal" id="integracao">
+      <div class="conteudo-secao-principal">
+
+        <div class="coluna-texto-principal">
+          <h1 class="titulo-principal">
+            Integração
+          </h1>
+
+          <p class="subtitulo-principal">
+            Com toda nossa experiência e vivência em implantação de sistemas de gestão ERP, oferecemos soluções
+            personalizadas.
+          </p>
+
+          <p class="subtitulo-principal">
+            Conseguimos desenvolver diferentes formas customizadas que garantem ainda mais o sucesso no dia a dia de
+            empresa,
+            potencializando a utilização de seu ERP em funções específicas dentro dos diferentes departamentos e fluxos
+            de trabalho de empresa.
+          </p>
+
+          <button class="botao-principal">Saber mais</button>
+        </div>
+
+        <div class="coluna-imagem-principal">
+          <div class="container-imagem-principal imagem-integracao"></div>
+        </div>
+
+      </div>
+    </section>
+
 
     <section id="parcerias"></section>
     <section id="mais"></section>
@@ -121,4 +172,5 @@
   <script src="js/header.js"></script>
   <script src="js/secao-servicos.js"></script>
 </body>
+
 </html>
