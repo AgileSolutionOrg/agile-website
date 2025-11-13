@@ -5,27 +5,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Agile Solution</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/secao-principal.css">
+  <link rel="stylesheet" href="css/secao-servicos.css">
 </head>
-
 <body>
   <header class="cabecalho-site" data-cabecalho>
     <div class="conteudo-cabecalho">
       <div class="area-logotipo">
-        <a href="#"><img src="img/logo.png" alt="Agile Solution" class="logotipo"></a>
+        <a href="#">
+          <img src="img/logo.png" alt="Agile Solution" class="logotipo">
+        </a>
       </div>
-
       <div class="area-menu">
         <nav class="menu-navegacao" id="menu-principal" data-menu>
           <button class="item-menu" data-ir="sobre">SOBRE</button>
           <button class="item-menu" data-ir="parcerias">PARCERIAS</button>
           <button class="item-menu" data-ir="mais">MAIS</button>
         </nav>
-
-        <button class="icone-menu" data-abrir-menu aria-label="Abrir menu">
+        <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false" aria-label="Abrir menu">
           <svg width="22" height="16" viewBox="0 0 22 16" xmlns="http://www.w3.org/2000/svg">
             <rect width="22" height="2" y="0" fill="#1F4B8C"/>
             <rect width="22" height="2" y="7" fill="#1F4B8C"/>
@@ -37,36 +36,68 @@
   </header>
 
   <main>
-
-    <!-- ============================ -->
-    <!--      PRIMEIRA SECTION        -->
-    <!-- ============================ -->
     <section class="secao-principal">
       <div class="conteudo-secao-principal">
-
         <div class="coluna-texto-principal">
           <h1 class="titulo-principal">
-            Agilidade & soluções,<br> desafiando o futuro.
+            Agilidade & soluções,<br>desafiando o futuro.
           </h1>
-
           <p class="subtitulo-principal">
             Com mais de 24 anos de experiência em desenvolvimento de Software Nacional e Internacional,
             a Agile Solution é uma empresa que presta serviço em criação de soluções de forma ágil
             e eficiente para sua empresa.
           </p>
-
           <button class="botao-principal">Saber mais</button>
         </div>
-
         <div class="coluna-imagem-principal">
           <div class="container-imagem-principal"></div>
         </div>
-
       </div>
     </section>
 
+    <section class="secao-servicos" id="sobre">
+      <div class="container-servicos">
+        <div class="cabecalho-servicos">
+          <h2 class="titulo-servicos">Desenvolvimento de softwares</h2>
+          <p class="subtitulo-servicos">Padrões internacionais</p>
+        </div>
+        <div class="lista-cartoes-servicos" data-carrossel-servicos>
+          <article class="cartao-servico">
+            <h3 class="titulo-cartao-servico">Criação de portais web</h3>
+            <p class="texto-cartao-servico">
+              Criação de portais que podem estar conectados com o ERP totalmente online.
+            </p>
+          </article>
+          <article class="cartao-servico">
+            <h3 class="titulo-cartao-servico">Integrações entre sistemas</h3>
+            <p class="texto-cartao-servico">
+              Soluções que permitem comunicação entre múltiplas plataformas, integrações via APIs,
+              webservices e webhooks, garantindo dados sempre atualizados.
+            </p>
+          </article>
+          <article class="cartao-servico">
+            <h3 class="titulo-cartao-servico">Aplicações sob medida</h3>
+            <p class="texto-cartao-servico">
+              Sistemas personalizados para as necessidades do seu negócio, com foco em escalabilidade,
+              segurança e alta disponibilidade.
+            </p>
+          </article>
+          <article class="cartao-servico">
+            <h3 class="titulo-cartao-servico">Automação de processos</h3>
+            <p class="texto-cartao-servico">
+              Automação de rotinas operacionais, reduzindo erros manuais e aumentando a produtividade
+              das equipes.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="parcerias"></section>
+    <section id="mais"></section>
   </main>
 
-  <script src="js/main.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/secao-servicos.js"></script>
 </body>
 </html>
