@@ -32,13 +32,5 @@ a{
 button{
   font-family:inherit;
 }
-.fade-in {
-  opacity: 0;
-  transform: translateY(25px);
-  transition: opacity 2.2s ease, transform 2.2s ease;
-}
 
-.fade-in.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+
