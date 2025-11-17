@@ -1,8 +1,8 @@
 const heroTypingElement=document.getElementById('hero-typing')
 const heroPhrases=[
-  "Soluções com agilidade.",
-  "Soluções com inteligência.",
-  "Soluções com Agile Solution."
+  "Agile Solution",
+  "Agilidade & soluções",
+  "Desafiando o futuro."
 ]
 
 let heroPhraseIndex=0
