@@ -1,5 +1,10 @@
 const heroTypingElement=document.getElementById('hero-typing')
-const heroPhrases=["Soluções com agilidade.","Soluções com inteligência.","Soluções que conectam.","Soluções sob medida."]
+const heroPhrases=[
+  "Soluções com agilidade.",
+  "Soluções com inteligência.",
+  "Soluções com Agile Solution."
+]
+
 let heroPhraseIndex=0
 let heroCharIndex=0
 let heroDeleting=false
@@ -22,8 +27,8 @@ function heroTypeLoop(){
     }
   }
   heroTypingElement.textContent=currentPhrase.substring(0,heroCharIndex)
-  const baseDelay=50
-  const extraDelay=heroDeleting?0:20
+  const baseDelay=40
+  const extraDelay=heroDeleting?0:10
   setTimeout(heroTypeLoop,baseDelay+extraDelay)
 }
 
