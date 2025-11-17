@@ -47,10 +47,10 @@
 .item-cliente{
   width:240px;
   height:240px;
-  border-radius:26px;
-  background:#1F4B8C;
   flex-shrink:0;
 }
+
+
 
 /* animações */
 .faixa-clientes-superior .lista-clientes{

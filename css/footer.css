@@ -56,12 +56,42 @@
   margin-top:8px;
 }
 
-.icone-rede{
-  width:40px;
-  height:40px;
-  border-radius:10px;
-  background:#1F4B8C;
+
+
+.redes-rodape .icone-rede{
+  width:45px;
+  height:45px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:60%;
+  border-radius:12px;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
 }
+
+.redes-rodape .icone-rede:hover{
+  transform:translateY(-2px) scale(1.05);
+  box-shadow:0 8px 18px rgba(0,0,0,.28);
+  background-color:rgba(255,255,255,.06);
+  opacity:.96;
+}
+
+
+.redes-rodape .icone-rede:nth-child(1){
+  background-image:url('../img/instagram-icone.png');
+}
+
+.redes-rodape .icone-rede:nth-child(2){
+  background-image:url('../img/whatsapp-icone.png');
+}
+
+.redes-rodape .icone-rede:nth-child(3){
+  background-image:url('../img/linkedin-icone.png');
+}
+
 
 /* RESPONSIVO */
 @media(max-width:900px){
