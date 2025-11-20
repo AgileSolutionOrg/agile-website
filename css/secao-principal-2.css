@@ -276,7 +276,7 @@
     flex-direction: column;
     text-align: center;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
   }
 
   .coluna-texto-hero {
@@ -376,5 +376,8 @@
   #hero-typing {
     max-width: 80%;
     white-space: normal;
+  } 
+  .hero-titulo-typing {
+    max-height: 63px;
   }
 }
