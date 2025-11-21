@@ -22,23 +22,32 @@
   text-align:center;
 }
 
-/* faixa com padding externo (espaço até as bordas) */
+/* faixa com padding externo (ate as bordas) */
 .faixa-clientes{
   overflow:hidden;
   width:100%;
   display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
   padding:0 32px;
+  scrollbar-width:none;
 }
 
-/* cada lista é um “bloco” duplicado para loop infinito */
+.faixa-clientes::-webkit-scrollbar{
+  display:none;
+}
+
+/* cada lista e um bloco duplicado para loop infinito */
 .lista-clientes{
   display:flex;
-  gap:24px;     /* espaçamento padrão entre os cards */
+  align-items:center;
+  gap:30px;
   padding:0;
   margin:0;
+  flex-shrink:0;
 }
 
-/* espaço entre o final da 1ª lista e o início da 2ª = mesmo gap */
+/* espacamento entre o final da 1a lista e o inicio da 2a = mesmo gap */
 .faixa-clientes .lista-clientes + .lista-clientes{
   margin-left:24px;
 }
@@ -56,24 +65,16 @@
   background-size:contain;
 }
 
-
-
-
-/* animações */
-.faixa-clientes-superior .lista-clientes{
-  animation:clientes-esquerda 27s linear infinite;
-}
-.faixa-clientes-inferior .lista-clientes{
-  animation:clientes-direita 27s linear infinite;
-}
-
-@keyframes clientes-esquerda{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-100%)}
-}
-@keyframes clientes-direita{
-  0%{transform:translateX(-100%)}
-  100%{transform:translateX(0)}
+.item-cliente2{
+  width:240px;
+  height:150px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:contain;
 }
 
 /* responsivo */
