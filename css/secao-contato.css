@@ -167,7 +167,6 @@
 }
 
 
-/* Responsivo */
 @media(max-width:900px) {
     .secao-contato {
         padding: 32px 24px 64px;

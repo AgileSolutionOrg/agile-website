@@ -15,12 +15,10 @@
   justify-content:space-between;
 }
 
-/* logo (placeholder azul) */
 .area-logo-rodape{
   display:flex;
   align-items:center;
 }
-/* logo (imagem aplicada via background igual às outras) */
 .logo-rodape{
   width:260px;
   height:220px;
@@ -34,13 +32,11 @@
   transition:transform .35s ease, box-shadow .35s ease;
 }
 
-/* hover bem leve, seguindo estilo futurista clean */
 .logo-rodape:hover{
   transform:translateY(-3px);
   box-shadow:0 12px 26px rgba(0,0,0,0.45);
 }
 
-/* bloco de contatos à direita */
 .area-contatos-rodape{
   display:flex;
   flex-direction:column;
@@ -62,7 +58,6 @@
   font-size:18px;
 }
 
-/* redes sociais (placeholders azuis) */
 .redes-rodape{
   display:flex;
   gap:12px;
@@ -106,7 +101,6 @@
 }
 
 
-/* RESPONSIVO */
 @media(max-width:900px){
 
  

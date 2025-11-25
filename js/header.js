@@ -1,4 +1,3 @@
-// js/header.js
 const cabecalho=document.querySelector('[data-cabecalho]')
 const botaoMenu=document.querySelector('[data-abrir-menu]')
 const itensMenu=document.querySelectorAll('.item-menu')
