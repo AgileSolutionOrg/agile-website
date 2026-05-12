@@ -1,0 +1,19 @@
+.agilex-wave {
+  position: fixed;
+  top: 96px;
+  left: 18px;
+  z-index: 1001;
+  width: clamp(74px, 9vw, 118px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .2));
+}
+
+@media (max-width: 750px) {
+  .agilex-wave {
+    top: 76px;
+    left: 10px;
+    width: clamp(62px, 20vw, 84px);
+  }
+}
