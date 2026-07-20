@@ -1,0 +1,190 @@
+/* Seção "Nosso Ecossistema" (Soluções) — navy com brilho, no estilo do folder Agile */
+.secao-ecossistema {
+  background: radial-gradient(circle at 15% 0%, #273554 0%, #1A202C 45%, #151927 100%);
+  padding: 96px 24px 104px;
+  position: relative;
+  overflow: hidden;
+}
+
+.secao-ecossistema::before {
+  /* halo azul difuso no fundo, como o circuito do folder */
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, rgba(79, 163, 255, .16), transparent 62%);
+  pointer-events: none;
+}
+
+.container-ecossistema {
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.cabecalho-ecossistema {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 52px;
+}
+
+.tag-ecossistema {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: #4FA3FF;
+  background: rgba(79, 163, 255, .10);
+  border: 1px solid rgba(79, 163, 255, .30);
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.titulo-ecossistema {
+  font-size: 34px;
+  font-weight: 700;
+  color: #F9FAFB;
+  letter-spacing: -.01em;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.subtitulo-ecossistema {
+  font-size: 16px;
+  color: #AEBBD4;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.grade-produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  gap: 20px;
+}
+
+.cartao-produto {
+  background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(31, 75, 140, .10));
+  border: 1px solid rgba(255, 255, 255, .10);
+  border-radius: 18px;
+  padding: 26px 24px 28px;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.cartao-produto:hover {
+  transform: translateY(-4px);
+  border-color: rgba(79, 163, 255, .55);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45), 0 0 0 1px rgba(79, 163, 255, .12);
+}
+
+/* cards que levam a um portal próprio (Cred, Robots) */
+.cartao-produto.clicavel {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.link-produto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  color: #4FA3FF;
+}
+
+.link-produto svg {
+  width: 15px;
+  height: 15px;
+  transition: transform .15s ease;
+}
+
+.cartao-produto.clicavel:hover .link-produto svg {
+  transform: translate(2px, -2px);
+}
+
+.icone-produto {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1F4B8C, #1F75FF);
+  box-shadow: 0 8px 20px rgba(31, 75, 140, .5), 0 0 12px rgba(79, 163, 255, .3);
+  margin-bottom: 18px;
+}
+
+.icone-produto svg {
+  width: 26px;
+  height: 26px;
+  stroke: #fff;
+}
+
+.nome-produto {
+  font-size: 20px;
+  font-weight: 500;
+  color: #F9FAFB;
+  margin: 0 0 2px;
+  letter-spacing: .01em;
+}
+
+.nome-produto b {
+  font-weight: 700;
+}
+
+.tagline-produto {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #4FA3FF;
+  margin: 0 0 12px;
+}
+
+.texto-produto {
+  font-size: 14px;
+  color: #C3CEE2;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modulos-produto {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .10);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.modulos-produto li {
+  font-size: 13px;
+  color: #AEBBD4;
+  padding-left: 18px;
+  position: relative;
+}
+
+.modulos-produto li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4FA3FF;
+  box-shadow: 0 0 6px rgba(79, 163, 255, .8);
+}
+
+@media (max-width: 750px) {
+  .secao-ecossistema { padding: 64px 18px 72px; }
+  .titulo-ecossistema { font-size: 26px; }
+  .grade-produtos { grid-template-columns: 1fr; }
+}

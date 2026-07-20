@@ -75,7 +75,7 @@
   <link rel="stylesheet" href="css/secao-servicos.css">
   <link rel="stylesheet" href="css/secao-tecnologias.css">
   <link rel="stylesheet" href="css/secao-clientes.css">
-  <link rel="stylesheet" href="css/secao-certificacao.css">
+  <link rel="stylesheet" href="css/secao-ecossistema.css">
   <link rel="stylesheet" href="css/footer.css">
   <link rel="stylesheet" href="css/secao-contato.css">
   <link rel="stylesheet" href="css/efeitos.css">
@@ -99,6 +99,9 @@
           <button class="item-menu" data-ir="sobre">SOBRE NÓS</button>
           <button class="item-menu" data-ir="parcerias">CLIENTES</button>
           <button class="item-menu" data-ir="mais">SOLUÇÕES</button>
+          <!-- Área do Cliente: leva ao Portal Agile (control plane na nuvem). O portal ainda não
+               está publicado neste domínio — o link só funciona depois do deploy + DNS. -->
+          <a class="botao-area-cliente" href="https://portal.agilesolution.com.br">Área do Cliente</a>
         </nav>
         <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false"
           aria-label="Abrir menu">
@@ -223,32 +226,6 @@
       </div>
     </section>
 
-    <section class="secao-principal-topo">
-      <div class="conteudo-principal-topo">
-        <div class="coluna-texto-topo">
-          <h1 class="titulo-principal-topo drop-in anim-delay-1">
-            Agile Robots
-          </h1>
-          <p class="subtitulo-principal-topo slide-left anim-delay-2">
-            Agile Robots é o serviço de automação da Agile Solution. Agentes digitais que assumem tarefas repetitivas e
-            importantes, com segurança e precisão. Eles utilizam WhatsApp integrado ao seu ERP e inteligência artificial
-            para falar com pessoas, buscar dados e
-            executar rotinas.
-          </p>
-          <p class="subtitulo-principal-topo subtitulo-principal-topo2 slide-left anim-delay-3">
-            Você tem um robô com a identidade da sua empresa, pronto para ser o seu braço direito, disponibilizando
-            informações operacionais relevantes com agilidade e oferecendo atendimento aos seus clientes em qualquer
-            horário, todos os dias.
-          </p>
-          <button class="botao-principal-topo zoom-in anim-delay-4" id="botao-robots">Saiba mais</button>
-        </div>
-
-        <div class="coluna-imagem-topo">
-          <div class="container-imagem-topo container-imagem-topo4"> <img src="img/imagem-agile-robots.png"
-              alt="Agile Robots" class="imagem-robots blur-in anim-delay-4"></div>
-        </div>
-      </div>
-    </section>
 
     <section class="secao-tecnologias zoom-in">
       <div class="container-tecnologias">
@@ -427,27 +404,110 @@
 
 
 
-    <section class="secao-certificacao">
-      <div class="conteudo-certificacao zoom-in">
-        <h2 class="titulo-certificacao drop-in anim-delay-1">Certificações e credenciais</h2>
-
-        <p class="subtitulo-certificacao slide-left anim-delay-2">
-          A Agile Solution cumpre as normas de proteção de dados, incluindo a LGPD, e atua com responsabilidade,
-          transparência e compromisso na entrega. Cada projeto reforça a confiança construída com nossos clientes.
-        </p>
-
-        <div class="grid-certificados">
-          <div class="card-certificado fade-in anim-delay-2"
-            style="background-image:url('img/certificado-magento.png')"></div>
-
-          <div class="card-certificado fade-in anim-delay-3" style="background-image:url('img/certificado-tray.png')">
-          </div>
+    <!-- ============================ NOSSO ECOSSISTEMA (Soluções) ============================ -->
+    <section id="mais" class="secao-ecossistema">
+      <div class="container-ecossistema">
+        <div class="cabecalho-ecossistema zoom-in">
+          <span class="tag-ecossistema">NOSSO ECOSSISTEMA</span>
+          <h2 class="titulo-ecossistema">Todos os produtos Agile, num só lugar</h2>
+          <p class="subtitulo-ecossistema">
+            Tecnologia, integração e inteligência artificial que se conectam para transformar a operação da sua empresa.
+          </p>
         </div>
 
+        <div class="grade-produtos fade-in anim-delay-2">
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="sparkles"></i></div>
+            <h3 class="nome-produto">Agile <b>ONE</b></h3>
+            <p class="tagline-produto">Inteligência artificial para gestão</p>
+            <p class="texto-produto">
+              Agentes inteligentes que analisam os dados do seu ERP e transformam informação em decisão estratégica.
+            </p>
+            <ul class="modulos-produto">
+              <li>Impulso — Vendas</li>
+              <li>Fluxo — Compras</li>
+              <li>Produz — Produção</li>
+              <li>Equilibra — Financeiro</li>
+              <li>SAGE — Assistente inteligente</li>
+            </ul>
+          </article>
+
+          <article class="cartao-produto clicavel" onclick="window.open('https://www.agilerobots.com.br','_blank','noopener')">
+            <div class="icone-produto"><i data-lucide="bot"></i></div>
+            <h3 class="nome-produto">Agile <b>Robots</b></h3>
+            <p class="tagline-produto">Automação inteligente de processos</p>
+            <p class="texto-produto">
+              Robôs (RPA) que executam tarefas repetitivas e integram sistemas: validação, processamento de
+              documentos e rotinas personalizadas, reduzindo erros e liberando a equipe.
+            </p>
+            <span class="link-produto">Acessar portal <i data-lucide="arrow-up-right"></i></span>
+          </article>
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="cable"></i></div>
+            <h3 class="nome-produto">Agile <b>Connect</b></h3>
+            <p class="tagline-produto">Integrações inteligentes</p>
+            <p class="texto-produto">
+              Conecta ERPs, CRMs, e-commerces, marketplaces e APIs num único ecossistema de dados, com fluxo
+              contínuo e confiável entre os sistemas.
+            </p>
+          </article>
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="network"></i></div>
+            <h3 class="nome-produto">Agile <b>Hub</b></h3>
+            <p class="tagline-produto">Integração e colaboração</p>
+            <p class="texto-produto">
+              Hub central de integrações e dados que conecta sistemas, equipes e informações em tempo real,
+              dando visão única da operação.
+            </p>
+          </article>
+
+          <article class="cartao-produto clicavel" onclick="window.open('https://agilecred.com.br','_blank','noopener')">
+            <div class="icone-produto"><i data-lucide="trending-up"></i></div>
+            <h3 class="nome-produto">Agile <b>Cred</b></h3>
+            <p class="tagline-produto">Crédito inteligente</p>
+            <p class="texto-produto">
+              Análise de crédito a partir de múltiplas fontes, com o <b>ICA</b> (Índice de Confiança Ágil)
+              para decisões mais rápidas e mais seguras.
+            </p>
+            <span class="link-produto">Acessar portal <i data-lucide="arrow-up-right"></i></span>
+          </article>
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="clipboard-check"></i></div>
+            <h3 class="nome-produto">Agile <b>Check</b></h3>
+            <p class="tagline-produto">Checklists e auditorias</p>
+            <p class="texto-produto">
+              App mobile (Android e iOS) para conferência de cargas, apontamentos de produção, ordens de serviço
+              e auditorias — a coleta de dados na palma da mão.
+            </p>
+          </article>
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="headset"></i></div>
+            <h3 class="nome-produto">Agile <b>Service</b></h3>
+            <p class="tagline-produto">Serviços e atendimento</p>
+            <p class="texto-produto">
+              Soluções sob medida: customizações, portais web, APIs e webhooks, manutenção e suporte contínuo
+              para o seu negócio.
+            </p>
+          </article>
+
+          <article class="cartao-produto">
+            <div class="icone-produto"><i data-lucide="activity"></i></div>
+            <h3 class="nome-produto">Agile <b>Monitor</b></h3>
+            <p class="tagline-produto">Monitoramento em tempo real</p>
+            <p class="texto-produto">
+              Acompanha jobs, integrações e a saúde do banco de dados do cliente em tempo real, com alertas
+              e ação sobre os serviços — tudo no portal.
+            </p>
+          </article>
+
+        </div>
       </div>
     </section>
-
-    <section id="mais"></section>
 
     <section class="secao-contato" id="contato">
       <div class="conteudo-contato zoom-in">

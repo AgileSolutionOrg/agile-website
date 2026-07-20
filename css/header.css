@@ -62,6 +62,38 @@
   color: #E0F2FE;
 }
 
+/* Botão "Área do Cliente" — CTA que leva ao Portal Agile */
+.botao-area-cliente {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(120deg, #1F4B8C 0%, #1F75FF 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .04em;
+  padding: 10px 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(31, 75, 140, .45), 0 0 10px rgba(77, 166, 255, .25);
+  transition: filter .15s, transform .15s;
+}
+
+.botao-area-cliente::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E0F2FE;
+  box-shadow: 0 0 8px rgba(224, 242, 254, .9);
+}
+
+.botao-area-cliente:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
 .icone-menu {
   display: flex;
   align-items: center;
@@ -116,5 +148,12 @@
   .item-menu {
     width: 100%;
     text-align: right;
+  }
+
+  /* No menu mobile (dropdown), o botão vira largura total e centralizado */
+  .botao-area-cliente {
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
   }
 }
