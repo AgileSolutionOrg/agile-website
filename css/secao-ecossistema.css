@@ -188,3 +188,25 @@
   .titulo-ecossistema { font-size: 26px; }
   .grade-produtos { grid-template-columns: 1fr; }
 }
+
+/* O card da plataforma. Um unico destaque na grade - se dois cards brilham, nenhum brilha. */
+.cartao-plataforma {
+  position: relative;
+  border-color: rgba(79, 163, 255, .45);
+  background: linear-gradient(160deg, rgba(79, 163, 255, .14), rgba(31, 75, 140, .18));
+  box-shadow: 0 0 0 1px rgba(79, 163, 255, .18);
+}
+
+.selo-plataforma {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(79, 163, 255, .18);
+  border: 1px solid rgba(79, 163, 255, .38);
+  color: #BFDCFF;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+}

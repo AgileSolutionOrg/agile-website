@@ -42,6 +42,8 @@
       "Desenvolvimento de software", "Inteligência Artificial", "Automação de processos",
       "RPA", "Integração de sistemas", "APIs", "Portais web", "Aplicativos",
       "ERP", "FoccoERP", "Análise de crédito", "WhatsApp para empresas",
+      "Gestão empresarial", "Sistema de gestão para pequenas empresas",
+      "Emissão de nota fiscal", "Contas a pagar e receber",
       "Chatbots", "Monitoramento de sistemas", "Consultoria em tecnologia"
     ],
     "address": {
@@ -80,6 +82,19 @@
         "@type": "ListItem", "position": 1,
         "item": {
           "@type": "SoftwareApplication",
+          "name": "AGILE",
+          "alternateName": "Plataforma AGILE",
+          "url": "https://app.agilesolution.com.br",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "Plataforma de gestão para micro e pequenas empresas em que se conversa em português: vendas, pedidos, nota fiscal, compras, estoque e contas a pagar e a receber, com leitura de boleto por foto.",
+          "publisher": { "@type": "Organization", "name": "Agile Solution" }
+        }
+      },
+      {
+        "@type": "ListItem", "position": 2,
+        "item": {
+          "@type": "SoftwareApplication",
           "name": "AgileCred",
           "url": "https://agilecred.com.br",
           "applicationCategory": "BusinessApplication",
@@ -89,7 +104,7 @@
         }
       },
       {
-        "@type": "ListItem", "position": 2,
+        "@type": "ListItem", "position": 3,
         "item": {
           "@type": "SoftwareApplication",
           "name": "Agile Robots",
@@ -101,7 +116,7 @@
         }
       },
       {
-        "@type": "ListItem", "position": 3,
+        "@type": "ListItem", "position": 4,
         "item": {
           "@type": "SoftwareApplication",
           "name": "Agile Connect",
@@ -112,7 +127,7 @@
         }
       },
       {
-        "@type": "ListItem", "position": 4,
+        "@type": "ListItem", "position": 5,
         "item": {
           "@type": "SoftwareApplication",
           "name": "Agile Monitor",
@@ -166,12 +181,23 @@
       </div>
       <div class="area-menu">
         <nav class="menu-navegacao" id="menu-principal" data-menu>
-          <button class="item-menu" data-ir="sobre">SOBRE NÓS</button>
+          <button class="item-menu" data-ir="mais">PRODUTOS</button>
+          <button class="item-menu" data-ir="integracao">SOLUÇÕES</button>
           <button class="item-menu" data-ir="parcerias">CLIENTES</button>
-          <button class="item-menu" data-ir="mais">SOLUÇÕES</button>
-          <!-- Área do Cliente: leva ao Portal Agile (control plane na nuvem). O portal ainda não
-               está publicado neste domínio — o link só funciona depois do deploy + DNS. -->
-          <a class="botao-area-cliente" href="https://portal.agilesolution.com.br">Área do Cliente</a>
+          <button class="item-menu" data-ir="sobre">SOBRE</button>
+
+          <!-- DUAS PORTAS, e a diferenca entre elas e a razao de existirem separadas:
+
+               Area do Cliente  -> portal da AGILE SOLUTION, a empresa. E onde o cliente ve
+                                   contratos, horas, chamados e o que contratou da gente.
+
+               Acessar AGILE    -> a PLATAFORMA. E o produto em si: a empresa do cliente
+                                   rodando dentro dela.
+
+               Sao publicos que se sobrepoem mas nao sao o mesmo: quem usa a plataforma nem
+               sempre e quem assina o contrato. Um botao so obrigaria a escolher por eles. -->
+          <a class="link-area-cliente" href="https://portal.agilesolution.com.br">Área do Cliente</a>
+          <a class="botao-acessar-agile" href="https://app.agilesolution.com.br">Acessar AGILE</a>
         </nav>
         <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false"
           aria-label="Abrir menu">
@@ -547,6 +573,29 @@
         </div>
 
         <div class="grade-produtos fade-in anim-delay-2">
+
+          <!-- A PLATAFORMA. Primeiro card de proposito: e para onde o botao do cabecalho leva,
+               e um visitante que clicou em "Acessar AGILE" e voltou precisa achar aqui o que
+               ele acabou de ver. -->
+          <article class="cartao-produto cartao-plataforma clicavel"
+            onclick="window.open('https://app.agilesolution.com.br','_blank','noopener')">
+            <span class="selo-plataforma">A PLATAFORMA</span>
+            <div class="icone-produto"><i data-lucide="messages-square"></i></div>
+            <h3 class="nome-produto"><b>AGILE</b></h3>
+            <p class="tagline-produto">Converse com a sua empresa</p>
+            <p class="texto-produto">
+              A gestão inteira em um lugar só — e você pergunta em português no lugar de caçar
+              relatório. "Quanto tenho a pagar essa semana?", "manda a nota do pedido 412".
+            </p>
+            <ul class="modulos-produto">
+              <li>Vendas, pedidos e nota fiscal</li>
+              <li>Compras e entrada de nota</li>
+              <li>Estoque</li>
+              <li>Contas a pagar e a receber</li>
+              <li>Boleto lido por foto</li>
+            </ul>
+            <span class="link-produto">Acessar AGILE <i data-lucide="arrow-up-right"></i></span>
+          </article>
 
           <article class="cartao-produto">
             <div class="icone-produto"><i data-lucide="sparkles"></i></div>

@@ -62,8 +62,29 @@
   color: #E0F2FE;
 }
 
-/* Botão "Área do Cliente" — CTA que leva ao Portal Agile */
-.botao-area-cliente {
+/* "Área do Cliente" — porta do portal corporativo.
+   Fica como link, nao como botao: dois botoes iguais lado a lado nao tem hierarquia, e o
+   visitante precisa de UM caminho obvio. O destaque e do produto. */
+.link-area-cliente {
+  color: #F9FAFB;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(224, 242, 254, .28);
+  white-space: nowrap;
+  transition: border-color .15s, background .15s;
+}
+
+.link-area-cliente:hover {
+  border-color: rgba(224, 242, 254, .6);
+  background: rgba(224, 242, 254, .08);
+}
+
+/* "Acessar AGILE" — a plataforma. O unico CTA em destaque do cabecalho. */
+.botao-acessar-agile {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -80,7 +101,7 @@
   transition: filter .15s, transform .15s;
 }
 
-.botao-area-cliente::before {
+.botao-acessar-agile::before {
   content: "";
   width: 8px;
   height: 8px;
@@ -89,7 +110,7 @@
   box-shadow: 0 0 8px rgba(224, 242, 254, .9);
 }
 
-.botao-area-cliente:hover {
+.botao-acessar-agile:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
@@ -150,10 +171,14 @@
     text-align: right;
   }
 
-  /* No menu mobile (dropdown), o botão vira largura total e centralizado */
-  .botao-area-cliente {
+  /* No menu mobile (dropdown), as duas portas viram largura total.
+     A ordem inverte de proposito: no dropdown o polegar chega primeiro ao que esta em baixo,
+     entao o CTA do produto fica por ultimo na lista e mais perto da mao. */
+  .link-area-cliente,
+  .botao-acessar-agile {
     width: 100%;
     justify-content: center;
+    text-align: center;
     margin-top: 4px;
   }
 }
