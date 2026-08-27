@@ -43,6 +43,7 @@
       "RPA", "Integração de sistemas", "APIs", "Portais web", "Aplicativos",
       "ERP", "FoccoERP", "Análise de crédito", "WhatsApp para empresas",
       "Gestão empresarial", "Sistema de gestão para pequenas empresas",
+      "Comando por voz", "ERP por voz",
       "Emissão de nota fiscal", "Contas a pagar e receber",
       "Chatbots", "Monitoramento de sistemas", "Consultoria em tecnologia"
     ],
@@ -83,11 +84,11 @@
         "item": {
           "@type": "SoftwareApplication",
           "name": "AGILE",
-          "alternateName": "Plataforma AGILE",
+          "alternateName": "Sistema AGILE",
           "url": "https://app.agilesolution.com.br",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web",
-          "description": "Plataforma de gestão para micro e pequenas empresas em que se conversa em português: vendas, pedidos, nota fiscal, compras, estoque e contas a pagar e a receber, com leitura de boleto por foto.",
+          "description": "Sistema de gestão para micro e pequenas empresas que se opera por voz ou pelas telas: vendas, pedidos, nota fiscal, compras, estoque e contas a pagar e a receber, com comando por voz e leitura de boleto por foto.",
           "publisher": { "@type": "Organization", "name": "Agile Solution" }
         }
       },
@@ -191,13 +192,28 @@
                Area do Cliente  -> portal da AGILE SOLUTION, a empresa. E onde o cliente ve
                                    contratos, horas, chamados e o que contratou da gente.
 
-               Acessar AGILE    -> a PLATAFORMA. E o produto em si: a empresa do cliente
-                                   rodando dentro dela.
+               Acessar AGILE    -> o PRODUTO. E a empresa do cliente rodando dentro dele.
 
                Sao publicos que se sobrepoem mas nao sao o mesmo: quem usa a plataforma nem
                sempre e quem assina o contrato. Um botao so obrigaria a escolher por eles. -->
-          <a class="link-area-cliente" href="https://portal.agilesolution.com.br">Área do Cliente</a>
-          <a class="botao-acessar-agile" href="https://app.agilesolution.com.br">Acessar AGILE</a>
+          <span class="porta">
+            <a class="botao-area-cliente" href="https://portal.agilesolution.com.br"
+              aria-describedby="dica-portal">Área do Cliente</a>
+            <span class="dica" id="dica-portal" role="tooltip">
+              <b>Agile Solution</b> — o portal da empresa. Contratos, horas do pacote, chamados e
+              tudo o que você contratou da gente.
+            </span>
+          </span>
+
+          <span class="porta">
+            <a class="botao-acessar-agile" href="https://app.agilesolution.com.br"
+              aria-describedby="dica-agile">Acessar AGILE</a>
+            <span class="dica dica-destaque" id="dica-agile" role="tooltip">
+              <b>AGILE</b> — o sistema de gestão da sua empresa: vendas, estoque, nota fiscal e
+              financeiro. Com todas as telas — e o que dá para fazer clicando, dá para fazer
+              <b>falando</b>.
+            </span>
+          </span>
         </nav>
         <button class="icone-menu" data-abrir-menu aria-controls="menu-principal" aria-expanded="false"
           aria-label="Abrir menu">
@@ -579,22 +595,49 @@
                ele acabou de ver. -->
           <article class="cartao-produto cartao-plataforma clicavel"
             onclick="window.open('https://app.agilesolution.com.br','_blank','noopener')">
-            <span class="selo-plataforma">A PLATAFORMA</span>
-            <div class="icone-produto"><i data-lucide="messages-square"></i></div>
-            <h3 class="nome-produto"><b>AGILE</b></h3>
-            <p class="tagline-produto">Converse com a sua empresa</p>
-            <p class="texto-produto">
-              A gestão inteira em um lugar só — e você pergunta em português no lugar de caçar
-              relatório. "Quanto tenho a pagar essa semana?", "manda a nota do pedido 412".
-            </p>
-            <ul class="modulos-produto">
+
+            <div class="plataforma-texto">
+              <span class="selo-plataforma">A PLATAFORMA</span>
+              <div class="icone-produto"><i data-lucide="messages-square"></i></div>
+              <h3 class="nome-produto"><b>AGILE</b></h3>
+              <p class="tagline-produto">Por voz ou pelas telas</p>
+
+              <p class="texto-produto">
+                É o sistema de gestão da sua empresa — vendas, compras, estoque e financeiro no
+                mesmo lugar, com todas as telas que você espera de um sistema. O diferencial é o
+                atalho: <b>o que dá para fazer clicando, dá para fazer falando</b>.
+              </p>
+
+              <p class="texto-produto">
+                Ninguém tem as duas mãos livres o dia inteiro. No balcão, no depósito ou no
+                carro, é mais rápido dizer do que digitar — e é a mesma operação, no mesmo
+                sistema. Quem prefere o mouse não perde nada.
+              </p>
+
+              <div class="frases-agile">
+                <span>"Lança a nota desse fornecedor"</span>
+                <span>"Quanto tenho a pagar essa semana?"</span>
+                <span>"Manda a nota do pedido 412"</span>
+              </div>
+
+              <p class="texto-produto texto-produto-fecho">
+                Feito para micro e pequena empresa: nasce configurado, sem projeto de implantação
+                e sem consultor. E o boleto do fornecedor entra por <b>foto</b> — o AGILE lê o
+                valor, o vencimento e o código de barras.
+              </p>
+
+              <span class="link-produto">Acessar AGILE <i data-lucide="arrow-up-right"></i></span>
+            </div>
+
+            <ul class="modulos-produto plataforma-modulos">
               <li>Vendas, pedidos e nota fiscal</li>
               <li>Compras e entrada de nota</li>
-              <li>Estoque</li>
+              <li>Estoque com custo médio</li>
               <li>Contas a pagar e a receber</li>
+              <li>Comando por voz em tudo</li>
               <li>Boleto lido por foto</li>
+              <li>Fluxo de caixa e alertas</li>
             </ul>
-            <span class="link-produto">Acessar AGILE <i data-lucide="arrow-up-right"></i></span>
           </article>
 
           <article class="cartao-produto">
