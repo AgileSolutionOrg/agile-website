@@ -62,8 +62,105 @@
   color: #E0F2FE;
 }
 
-/* Botão "Área do Cliente" — CTA que leva ao Portal Agile */
+/* AS DUAS PORTAS.
+
+   Os dois sao botoes de verdade - o cliente precisa ACHAR os dois. O que os separa nao e um
+   ser apagado e o outro aceso, e o peso: preenchido para a plataforma (o produto), contornado
+   solido para o portal. Hierarquia sem esconder nada.
+
+   A .porta so existe para ancorar a dica: sem position relative aqui, a dica se posiciona
+   pela pagina inteira e aparece no canto errado. */
+.porta {
+  position: relative;
+  display: inline-flex;
+}
+
+/* "Área do Cliente" — portal corporativo. Secundario: contorno solido, fundo translucido. */
 .botao-area-cliente {
+  display: inline-flex;
+  align-items: center;
+  color: #F9FAFB;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(224, 242, 254, .55);
+  background: rgba(224, 242, 254, .07);
+  white-space: nowrap;
+  transition: border-color .15s, background .15s, transform .15s;
+}
+
+.botao-area-cliente:hover {
+  border-color: #E0F2FE;
+  background: rgba(224, 242, 254, .16);
+  transform: translateY(-1px);
+}
+
+/* A DICA. Aparece no hover E no foco de teclado - quem navega por Tab precisa da mesma
+   explicacao que quem usa mouse, senao a informacao existe so para metade das pessoas. */
+.dica {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 300px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #0F1420;
+  border: 1px solid rgba(224, 242, 254, .16);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+  color: #C3CEE2;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  pointer-events: none;
+  z-index: 1200;
+}
+
+.dica b {
+  color: #F9FAFB;
+  font-weight: 700;
+}
+
+.dica-destaque {
+  border-color: rgba(79, 163, 255, .45);
+}
+
+.dica-destaque b {
+  color: #7FBBFF;
+}
+
+/* a setinha, apontando para o botao */
+.dica::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 26px;
+  border: 7px solid transparent;
+  border-bottom-color: #0F1420;
+}
+
+.porta:hover .dica,
+.porta a:focus-visible + .dica {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dica { transition: none; transform: none; }
+}
+
+/* "Acessar AGILE" — a plataforma. O unico CTA em destaque do cabecalho. */
+.botao-acessar-agile {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -80,7 +177,7 @@
   transition: filter .15s, transform .15s;
 }
 
-.botao-area-cliente::before {
+.botao-acessar-agile::before {
   content: "";
   width: 8px;
   height: 8px;
@@ -89,7 +186,7 @@
   box-shadow: 0 0 8px rgba(224, 242, 254, .9);
 }
 
-.botao-area-cliente:hover {
+.botao-acessar-agile:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
@@ -150,10 +247,20 @@
     text-align: right;
   }
 
-  /* No menu mobile (dropdown), o botão vira largura total e centralizado */
-  .botao-area-cliente {
+  /* No dropdown do celular as duas portas viram largura total. */
+  .porta {
     width: 100%;
-    justify-content: center;
     margin-top: 4px;
   }
+
+  .botao-area-cliente,
+  .botao-acessar-agile {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* A dica sai no celular: nao ha hover para dispara-la, e num dropdown estreito ela cobriria
+     justamente o botao que explica. Quem esta no celular le a explicacao no card da secao. */
+  .dica { display: none; }
 }
