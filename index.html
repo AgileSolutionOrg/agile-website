@@ -605,7 +605,12 @@
             <span class="selo-plataforma">A PLATAFORMA</span>
 
             <div class="plataforma-topo">
-              <div class="icone-produto"><i data-lucide="messages-square"></i></div>
+              <!-- O SIMBOLO DO AGILE, e nao um icone de biblioteca. O `messages-square` do
+                   lucide dizia "conversa" — e generico, e sai igual em qualquer site. A marca
+                   e a fita caligrafica com os dois pontos, e ela existe em vetor. -->
+              <div class="marca-agile">
+                <img src="img/agile-simbolo.svg" alt="" width="70" height="37">
+              </div>
               <div>
                 <h3 class="nome-produto"><b>AGILE</b></h3>
                 <p class="tagline-produto">O sistema de gestão que responde</p>
@@ -819,35 +824,25 @@
       <h3 class="painel-agile-nome" id="painel-agile-titulo"><b>AGILE</b></h3>
       <p class="painel-agile-linha">O sistema de gestão que você opera conversando</p>
 
-      <p class="painel-agile-texto">
-        Você pergunta em português — escrevendo ou falando — e ele responde com
-        <b>os seus números</b>. Peça, e ele executa depois de você confirmar. Ninguém tem as
-        duas mãos livres o dia inteiro: no balcão, no depósito ou no carro, é mais rápido dizer
-        do que digitar. Quem prefere o mouse não perde nada — as telas estão todas lá.
-      </p>
+      <!-- O FOLDER, que e a peca que a Agile ja tinha e ficou boa.
+           Ele entra em vez dos blocos de texto que estavam aqui — mas NAO sozinho: e uma
+           imagem de 1536px com tres colunas, e num celular vira uma faixa ilegivel. Por isso
+           a lista de modulos continua embaixo, em texto: e o que funciona na tela pequena, e
+           e o unico conteudo que o Google e um leitor de tela conseguem ler. -->
+      <a class="painel-agile-folder" href="img/agile-folder.jpg" target="_blank" rel="noopener"
+         aria-label="Abrir o folder do AGILE em tamanho real">
+        <img src="img/agile-folder.jpg" width="1536" height="1024" loading="lazy"
+             alt="Folder do AGILE: comandado por voz e orientado por IA. Contas, caixa,
+                  estoque, vendas, comissao, ponto e folha — com exemplos do que se pode
+                  pedir falando.">
+        <span class="painel-agile-lupa">Abrir em tamanho real</span>
+      </a>
 
-      <div class="painel-agile-destaques">
-        <article>
-          <h4>Você conversa com a empresa</h4>
-          <p>Ele responde lendo o banco de dados da <b>sua</b> empresa — não um manual. E não é
-             só leitura: lança conta, dá baixa, cadastra cliente, monta orçamento.</p>
-        </article>
-        <article>
-          <h4>Funciona por voz</h4>
-          <p>Segure para falar. O que foi entendido aparece <b>antes</b> de virar ação — e o seu
-             áudio não fica guardado.</p>
-        </article>
-        <article>
-          <h4>O boleto entra por foto</h4>
-          <p>Ele lê a linha digitável, propõe valor, vencimento e de quem é — e avisa se aquele
-             boleto <b>já foi lançado</b>.</p>
-        </article>
-        <article>
-          <h4>Seu representante vê o seu estoque</h4>
-          <p>Um link, sem conta e sem senha, na fatia que você definir. Custo nunca aparece.</p>
-        </article>
-      </div>
-
+      <!-- A LISTA CONTINUA, e nao e repeticao do folder.
+           O folder e uma imagem: num celular vira uma faixa ilegivel, e para o Google e para
+           um leitor de tela ele nao existe. Esta lista e o mesmo conteudo em TEXTO — o unico
+           que funciona nos tres casos. Ela e curta de proposito: quem quiser a peca inteira
+           abre a imagem. -->
       <h4 class="painel-agile-subtitulo">Tudo no mesmo lugar</h4>
       <ul class="modulos-produto painel-agile-modulos">
         <li>Vendas com baixa de estoque</li>

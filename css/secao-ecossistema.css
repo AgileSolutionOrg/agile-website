@@ -263,7 +263,11 @@
   margin: 16px 0 14px;
 }
 
-.plataforma-topo .icone-produto { margin-bottom: 0; flex: none; }
+/* A MARCA no lugar do icone generico. Sem a caixa azul de gradiente dos outros cards: o
+   simbolo do AGILE ja e a identidade, e enfiar a marca dentro de um quadradinho de icone a
+   rebaixa a mais um item da grade. */
+.marca-agile { flex: none; display: flex; align-items: center; }
+.marca-agile img { display: block; width: 70px; height: auto; }
 
 .cartao-plataforma .nome-produto {
   font-size: 30px;
@@ -329,7 +333,7 @@ body.com-painel { overflow: hidden; }
 
 .painel-agile-folha {
   position: relative;
-  width: min(880px, 100%);
+  width: min(1000px, 100%);
   margin: auto;
   background: linear-gradient(160deg, #223050 0%, #1A202C 55%, #151927 100%);
   border: 1px solid rgba(79, 163, 255, .35);
@@ -381,32 +385,43 @@ body.com-painel { overflow: hidden; }
 }
 .painel-agile-texto b { color: #F9FAFB; font-weight: 700; }
 
-.painel-agile-destaques {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  margin: 26px 0 4px;
+/* O FOLDER dentro do painel.
+   `overflow-x: auto` no proprio bloco: numa tela estreita a peca rola na horizontal em vez
+   de espremer a pagina inteira. E a legenda de "abrir em tamanho real" aparece porque, no
+   celular, ler o folder ali dentro nao e possivel — o caminho e abrir a imagem. */
+.painel-agile-folder {
+  display: block;
+  position: relative;
+  margin: 22px 0 6px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: #0E1526;
 }
 
-.painel-agile-destaques article {
-  border-top: 2px solid rgba(79, 163, 255, .55);
-  padding-top: 12px;
+.painel-agile-folder img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.painel-agile-destaques h4 {
-  font-size: 15px;
-  color: #F9FAFB;
-  margin: 0 0 5px;
+.painel-agile-lupa {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(10, 16, 30, .82);
+  border: 1px solid rgba(79, 163, 255, .45);
+  color: #DCE7FA;
+  font-size: 12px;
   font-weight: 600;
 }
 
-.painel-agile-destaques p {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #AEBBD4;
-  margin: 0;
+.painel-agile-folder:hover .painel-agile-lupa {
+  background: rgba(31, 117, 255, .92);
+  color: #fff;
 }
-.painel-agile-destaques b { color: #DCE7FA; }
 
 .painel-agile-subtitulo {
   font-size: 12px;
@@ -464,6 +479,6 @@ body.com-painel { overflow: hidden; }
   .cartao-plataforma { padding: 24px 20px 26px; }
   .cartao-plataforma .nome-produto { font-size: 25px; }
   .painel-agile-folha { padding: 28px 20px 30px; border-radius: 16px; }
-  .painel-agile-destaques,
   .painel-agile-modulos { grid-template-columns: 1fr; }
+  .marca-agile img { width: 56px; }
 }
