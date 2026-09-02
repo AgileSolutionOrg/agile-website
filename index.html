@@ -44,7 +44,7 @@
       "ERP", "FoccoERP", "Análise de crédito", "WhatsApp para empresas",
       "Gestão empresarial", "Sistema de gestão para pequenas empresas",
       "Comando por voz", "ERP por voz",
-      "Emissão de nota fiscal", "Contas a pagar e receber",
+      "Leitura de boleto por foto", "Contas a pagar e receber",
       "Chatbots", "Monitoramento de sistemas", "Consultoria em tecnologia"
     ],
     "address": {
@@ -88,7 +88,7 @@
           "url": "https://app.agilesolution.com.br",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web",
-          "description": "Sistema de gestão para micro e pequenas empresas que se opera por voz ou pelas telas: vendas, pedidos, nota fiscal, compras, estoque e contas a pagar e a receber, com comando por voz e leitura de boleto por foto.",
+          "description": "Sistema de gestão para micro e pequenas empresas que se opera por voz ou pelas telas: vendas, compras, estoque, contas a pagar e a receber, ponto e folha, com comando por voz, leitura de boleto por foto e link de estoque para representantes.",
           "publisher": { "@type": "Organization", "name": "Agile Solution" }
         }
       },
@@ -209,9 +209,9 @@
             <a class="botao-acessar-agile" href="https://app.agilesolution.com.br"
               aria-describedby="dica-agile">Acessar AGILE</a>
             <span class="dica dica-destaque" id="dica-agile" role="tooltip">
-              <b>AGILE</b> — o sistema de gestão da sua empresa: vendas, estoque, nota fiscal e
-              financeiro. Com todas as telas — e o que dá para fazer clicando, dá para fazer
-              <b>falando</b>.
+              <b>AGILE</b> — o sistema de gestão da sua empresa: vendas, estoque, financeiro,
+              ponto e folha. Com todas as telas — e você <b>pergunta e pede falando</b>,
+              em português.
             </span>
           </span>
         </nav>
@@ -593,51 +593,42 @@
           <!-- A PLATAFORMA. Primeiro card de proposito: e para onde o botao do cabecalho leva,
                e um visitante que clicou em "Acessar AGILE" e voltou precisa achar aqui o que
                ele acabou de ver. -->
-          <article class="cartao-produto cartao-plataforma clicavel"
-            onclick="window.open('https://app.agilesolution.com.br','_blank','noopener')">
+          <!-- O CARD DA PLATAFORMA — um convite, e nao a explicacao inteira.
+               Ele tinha virado uma parede de texto no meio de uma grade de cards curtos: a
+               pessoa batia o olho, via muito, e nao lia nada. Agora ele diz o que e em tres
+               linhas e ABRE. O que o AGILE faz mora do outro lado do clique, com espaco. -->
+          <article class="cartao-produto cartao-plataforma" data-abre-agile
+            role="button" tabindex="0"
+            aria-haspopup="dialog" aria-controls="painel-agile"
+            aria-label="AGILE — ver o que o sistema faz">
 
-            <div class="plataforma-texto">
-              <span class="selo-plataforma">A PLATAFORMA</span>
-              <div class="icone-produto"><i data-lucide="messages-square"></i></div>
-              <h3 class="nome-produto"><b>AGILE</b></h3>
-              <p class="tagline-produto">Por voz ou pelas telas</p>
+            <span class="selo-plataforma">A PLATAFORMA</span>
 
-              <p class="texto-produto">
-                É o sistema de gestão da sua empresa — vendas, compras, estoque e financeiro no
-                mesmo lugar, com todas as telas que você espera de um sistema. O diferencial é o
-                atalho: <b>o que dá para fazer clicando, dá para fazer falando</b>.
-              </p>
-
-              <p class="texto-produto">
-                Ninguém tem as duas mãos livres o dia inteiro. No balcão, no depósito ou no
-                carro, é mais rápido dizer do que digitar — e é a mesma operação, no mesmo
-                sistema. Quem prefere o mouse não perde nada.
-              </p>
-
-              <div class="frases-agile">
-                <span>"Lança a nota desse fornecedor"</span>
-                <span>"Quanto tenho a pagar essa semana?"</span>
-                <span>"Manda a nota do pedido 412"</span>
+            <div class="plataforma-topo">
+              <!-- O SIMBOLO DO AGILE, e nao um icone de biblioteca. O `messages-square` do
+                   lucide dizia "conversa" — e generico, e sai igual em qualquer site. A marca
+                   e a fita caligrafica com os dois pontos, e ela existe em vetor. -->
+              <div class="marca-agile">
+                <img src="img/agile-simbolo.svg" alt="" width="70" height="37">
               </div>
-
-              <p class="texto-produto texto-produto-fecho">
-                Feito para micro e pequena empresa: nasce configurado, sem projeto de implantação
-                e sem consultor. E o boleto do fornecedor entra por <b>foto</b> — o AGILE lê o
-                valor, o vencimento e o código de barras.
-              </p>
-
-              <span class="link-produto">Acessar AGILE <i data-lucide="arrow-up-right"></i></span>
+              <div>
+                <h3 class="nome-produto"><b>AGILE</b></h3>
+                <p class="tagline-produto">O sistema de gestão que responde</p>
+              </div>
             </div>
 
-            <ul class="modulos-produto plataforma-modulos">
-              <li>Vendas, pedidos e nota fiscal</li>
-              <li>Compras e entrada de nota</li>
-              <li>Estoque com custo médio</li>
-              <li>Contas a pagar e a receber</li>
-              <li>Comando por voz em tudo</li>
-              <li>Boleto lido por foto</li>
-              <li>Fluxo de caixa e alertas</li>
-            </ul>
+            <p class="texto-produto plataforma-chamada">
+              Vendas, compras, estoque, financeiro, ponto e folha no mesmo lugar — com todas as
+              telas que você espera. E você <b>pergunta e pede falando</b>, em português.
+            </p>
+
+            <div class="frases-agile">
+              <span>"Quanto tenho a pagar essa semana?"</span>
+              <span>"Como está meu estoque?"</span>
+              <span>"Lança R$ 1.200 de frete pra sexta"</span>
+            </div>
+
+            <span class="link-produto">Ver o que o AGILE faz <i data-lucide="arrow-right"></i></span>
           </article>
 
           <article class="cartao-produto">
@@ -816,6 +807,71 @@
   </footer>
 
   <script src="js/fade.js"></script>
+
+  <!-- ====================== O QUE O AGILE FAZ (abre pelo card da plataforma) ==============
+       Fica FORA da secao, colado ao fim do body, porque um dialogo dentro de um container
+       com `overflow: hidden` — que a secao do ecossistema tem, por causa do halo — nasce
+       recortado, e o defeito so aparece em tela pequena. -->
+  <div class="painel-agile" id="painel-agile" role="dialog" aria-modal="true"
+       aria-labelledby="painel-agile-titulo" hidden>
+    <div class="painel-agile-fundo" data-fecha-agile></div>
+
+    <div class="painel-agile-folha" role="document">
+      <button class="painel-agile-fechar" type="button" data-fecha-agile
+              aria-label="Fechar">&times;</button>
+
+      <span class="selo-plataforma">A PLATAFORMA</span>
+      <h3 class="painel-agile-nome" id="painel-agile-titulo"><b>AGILE</b></h3>
+      <p class="painel-agile-linha">O sistema de gestão que você opera conversando</p>
+
+      <!-- O FOLDER, que e a peca que a Agile ja tinha e ficou boa.
+           Ele entra em vez dos blocos de texto que estavam aqui — mas NAO sozinho: e uma
+           imagem de 1536px com tres colunas, e num celular vira uma faixa ilegivel. Por isso
+           a lista de modulos continua embaixo, em texto: e o que funciona na tela pequena, e
+           e o unico conteudo que o Google e um leitor de tela conseguem ler. -->
+      <a class="painel-agile-folder" href="img/agile-folder.jpg" target="_blank" rel="noopener"
+         aria-label="Abrir o folder do AGILE em tamanho real">
+        <img src="img/agile-folder.jpg" width="1536" height="1024" loading="lazy"
+             alt="Folder do AGILE: comandado por voz e orientado por IA. Contas, caixa,
+                  estoque, vendas, comissao, ponto e folha — com exemplos do que se pode
+                  pedir falando.">
+        <span class="painel-agile-lupa">Abrir em tamanho real</span>
+      </a>
+
+      <!-- A LISTA CONTINUA, e nao e repeticao do folder.
+           O folder e uma imagem: num celular vira uma faixa ilegivel, e para o Google e para
+           um leitor de tela ele nao existe. Esta lista e o mesmo conteudo em TEXTO — o unico
+           que funciona nos tres casos. Ela e curta de proposito: quem quiser a peca inteira
+           abre a imagem. -->
+      <h4 class="painel-agile-subtitulo">Tudo no mesmo lugar</h4>
+      <ul class="modulos-produto painel-agile-modulos">
+        <li>Vendas com baixa de estoque</li>
+        <li>Compras e recebimento</li>
+        <li>Estoque com custo médio e mínimo</li>
+        <li>Contas a pagar e a receber</li>
+        <li>Fluxo de caixa e alertas</li>
+        <li>Ponto e folha de pagamento</li>
+        <li>Comissão por representante</li>
+        <li>Boleto lido por foto</li>
+        <li class="modulo-vindo">Emissão de nota fiscal <span>em construção</span></li>
+      </ul>
+
+      <p class="painel-agile-rodape">
+        Feito para micro e pequena empresa: nasce configurado, sem projeto de implantação e sem
+        consultor.
+      </p>
+
+      <div class="painel-agile-acoes">
+        <a class="painel-agile-botao" href="https://app.agilesolution.com.br/conheca"
+           target="_blank" rel="noopener">Ver em detalhe</a>
+        <a class="painel-agile-botao painel-agile-botao-cheio"
+           href="https://app.agilesolution.com.br" target="_blank" rel="noopener">
+          Acessar AGILE
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script src="js/header.js"></script>
 
   <script src="js/secao-clientes.js"></script>
@@ -823,6 +879,7 @@
   <script src="js/mapa-presenca-dados.js"></script>
   <script src="js/mapa-presenca.js"></script>
   <script src="js/titulo-typing.js"></script>
+  <script src="js/painel-agile.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
