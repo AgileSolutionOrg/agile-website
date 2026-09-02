@@ -183,6 +183,40 @@
   box-shadow: 0 0 6px rgba(79, 163, 255, .8);
 }
 
+/*
+ * O QUE ESTA VINDO — anunciado, mas nunca no meio do que ja funciona.
+ *
+ * Anunciar o que se esta construindo e legitimo; o problema e a linha ficar na MESMA lista
+ * das que ja rodam, sem marca nenhuma. Assim ela le como "tem hoje", e a diferenca entre
+ * "esta vindo" e "tem" e a diferenca entre um cliente que espera e um cliente que se sente
+ * enganado — e a conta chega na reuniao, quando ele pede para ver.
+ *
+ * Por isso a linha desce de tom, o ponto perde o brilho e a etiqueta diz o estado em voz
+ * alta. Nao e para esconder: e para nao prometer.
+ */
+.modulos-produto li.modulo-vindo {
+  color: #7F8DA6;
+  margin-top: 3px;
+}
+
+.modulos-produto li.modulo-vindo::before {
+  background: #7F8DA6;
+  box-shadow: none;
+}
+
+.modulos-produto li.modulo-vindo span {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #9FB0CC;
+  vertical-align: 1px;
+}
+
 @media (max-width: 750px) {
   .secao-ecossistema { padding: 64px 18px 72px; }
   .titulo-ecossistema { font-size: 26px; }
