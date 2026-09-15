@@ -746,7 +746,25 @@
 
         <div class="coluna-formulario-contato">
           <form class="formulario-contato fade-in anim-delay-2"
-            action="https://formsubmit.co/suporte@agilesolution.com.br" method="POST">
+            <!--
+              ATENCAO: este endereco NAO segue o resto do site, e e de proposito.
+
+              O FormSubmit exige ATIVACAO por endereco: no primeiro envio ele
+              manda um e-mail de confirmacao para o destino e NAO ENTREGA NADA
+              ate alguem clicar no link. Trocar para suporte@ antes de ativar
+              derruba o contato do site em silencio — o visitante ve "enviado" e
+              a mensagem nao chega em lugar nenhum. Aconteceu em 15/09/2026, e
+              ficou assim por alguns minutos ate ser revertido.
+
+              PARA TROCAR (nesta ordem, nao ao contrario):
+                1. Enviar uma vez o formulario apontando para suporte@, num
+                   ambiente de teste ou aceitando a janela de indisponibilidade.
+                2. Abrir a caixa do suporte@ e clicar no link de ativacao.
+                3. So entao trocar este action aqui e publicar.
+
+              O mailto do rodape ja e suporte@: ele nao depende de ativacao.
+            -->
+            action="https://formsubmit.co/gildonei@agilesolution.com.br" method="POST">
             <input type="hidden" name="_subject" value="Novo contato pelo site Agile Solution">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
