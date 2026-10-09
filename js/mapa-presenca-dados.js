@@ -1,14 +1,15 @@
 /* Onde a Agile Solution ja chegou — dados da secao "Presenca no Brasil".
    ESTE e o unico arquivo do mapa que se edita a mao.
 
-   CRITERIO: empresa ja atendida, nao contrato ativo. A pergunta que a secao
-   responde e "onde a Agile ja chegou" — um cliente antigo continua sendo um
-   estado onde a Agile chegou. Por contrato ativo seriam 4 estados; por
-   empresa atendida, 10. Nao trocar para status='ATIVO'.
+   CRITERIO (decisao do Gildonei em 09/10/2026): estado com cliente que JA GEROU
+   RECEITA — tem lancamento no contas a receber do portal CONFIRMADO, EMITIDO ou
+   RECEBIDO, de qualquer ano. Cliente so cadastrado (sem venda) nao conta, e
+   previsao tambem nao. E o mesmo criterio do mapa do Ecossistema no portal.
 
    Conferencia no banco do portal (droplet):
      docker compose exec -T db psql -U agileportal -d agileportal -c \
-       "SELECT uf, cidade, count(*) FROM cliente GROUP BY uf, cidade ORDER BY uf, cidade;"
+       "SELECT upper(trim(c.uf)), count(*) FROM cliente c WHERE EXISTS (SELECT 1 FROM faturamento f
+        WHERE f.cliente_id = c.id AND f.situacao IN ('CONFIRMADO','EMITIDA','RECEBIDA')) GROUP BY 1;"
 
    O mapa mostra PRESENCA (sim/nao), nunca quantidade — nenhum numero de
    carteira aparece na tela.
@@ -22,11 +23,8 @@
 const MAPA_PRESENCA_DADOS = {
   revisado: true,
 
-  // Conferido no cadastro do portal em 09/10/2026: 21 estados (era 10). Os 11 novos — ES, BA, RJ,
-  // MT, MA, AL, AM, TO, PI, DF, MS — têm cliente com CNPJ e cidade conferidos na Receita.
-  // Fora do mapa: 2 clientes com uf "EX" (exterior).
-  ufs: ["RS", "SP", "SC", "PR", "CE", "MG", "GO", "ES", "BA", "PE", "RJ", "RN", "MT", "MA", "AL",
-        "AM", "PA", "TO", "PI", "DF", "MS"],
+  // Conferido em 09/10/2026: RS 27, SC 14, PR 11, CE 2, SP 1 clientes com receita.
+  ufs: ["RS", "SC", "PR", "SP", "CE"],
 
   cidades: [
     { nome: "Itajaí", uf: "SC", lat: -26.9078, lon: -48.6619, sede: true }
