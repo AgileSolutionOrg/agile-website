@@ -22,7 +22,11 @@
 const MAPA_PRESENCA_DADOS = {
   revisado: true,
 
-  ufs: ["RS", "SP", "SC", "PR", "CE", "MG", "RN", "PE", "PA", "GO"],
+  // Conferido no cadastro do portal em 09/10/2026: 21 estados (era 10). Os 11 novos — ES, BA, RJ,
+  // MT, MA, AL, AM, TO, PI, DF, MS — têm cliente com CNPJ e cidade conferidos na Receita.
+  // Fora do mapa: 2 clientes com uf "EX" (exterior).
+  ufs: ["RS", "SP", "SC", "PR", "CE", "MG", "GO", "ES", "BA", "PE", "RJ", "RN", "MT", "MA", "AL",
+        "AM", "PA", "TO", "PI", "DF", "MS"],
 
   cidades: [
     { nome: "Itajaí", uf: "SC", lat: -26.9078, lon: -48.6619, sede: true }
