@@ -770,8 +770,7 @@
         </div>
 
         <div class="coluna-formulario-contato">
-          <form class="formulario-contato fade-in anim-delay-2"
-            <!--
+          <!--
               ATENCAO: este endereco NAO segue o resto do site, e e de proposito.
 
               O FormSubmit exige ATIVACAO por endereco: no primeiro envio ele
@@ -789,6 +788,10 @@
 
               O mailto do rodape ja e suporte@: ele nao depende de ativacao.
             -->
+          <!-- E o comentario fica FORA da tag <form>: dentro dela (como esteve de 15/09 a 21/10/2026)
+               o navegador fecha a tag no '>' do comentario, o action vira texto na tela e o
+               formulario fica SEM destino — nenhuma mensagem do site chegava. -->
+          <form class="formulario-contato fade-in anim-delay-2"
             action="https://formsubmit.co/gildonei@agilesolution.com.br" method="POST">
             <input type="hidden" name="_subject" value="Novo contato pelo site Agile Solution">
             <input type="hidden" name="_captcha" value="false">
