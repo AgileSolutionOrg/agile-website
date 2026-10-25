@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mensagem recebida | Agile Solution</title>
+  <!-- Destino do formulario de contato (_next do FormSubmit). Fora do Google de proposito. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../img/favicon.png">
+  <!-- Mesma CSP do index.html (ver o comentario la). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <link rel="stylesheet" href="../css/fontes.css">
+  <link rel="stylesheet" href="../css/consentimento.css">
+  <style>
+    :root { --azul: #1F4B8D; --carmim: #AF3346; --fundo: #EDF1F8; --texto: #1A202C; --suave: #4A5A75; --linha: #D6DEEB; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Montserrat, system-ui, sans-serif; background: var(--fundo); color: var(--texto); line-height: 1.65; }
+    a { color: var(--azul); }
+    .topo { background: #fff; border-bottom: 1px solid var(--linha); }
+    .topo .in { max-width: 920px; margin: 0 auto; padding: 18px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .topo img { height: 48px; display: block; }
+    .topo a.voltar { font-weight: 600; font-size: 14px; text-decoration: none; }
+    main { max-width: 720px; margin: 0 auto; padding: 56px 16px 64px; }
+    .cartao { background: #fff; border-radius: 18px; padding: clamp(26px, 6vw, 52px); box-shadow: 0 10px 28px rgba(31,75,141,.10); text-align: center; }
+    .selo { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1F4B8C, #1F75FF); color: #fff; font-size: 32px; font-weight: 800; }
+    h1 { color: var(--azul); font-size: clamp(26px, 5vw, 36px); line-height: 1.2; margin: 0 0 12px; font-weight: 800; }
+    p { font-size: 16px; margin: 0 0 14px; }
+    .acoes { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px; }
+    .botao { display: inline-block; padding: 12px 24px; border-radius: 10px; font-weight: 700; text-decoration: none; border: 1px solid var(--azul); }
+    .botao.principal { background: var(--azul); color: #fff; }
+    footer { text-align: center; color: var(--suave); font-size: 13px; margin-top: 28px; }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="in">
+      <a href="/"><img src="../privacidade/logo-agile.png" alt="Agile Solution"></a>
+      <a class="voltar" href="/">← Voltar ao site</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="cartao">
+      <div class="selo" aria-hidden="true">✓</div>
+      <h1>Recebemos a sua mensagem</h1>
+      <p>Obrigado pelo contato. A equipe da Agile vai retornar pelo e-mail ou telefone que você informou.</p>
+      <p>Se for urgente, fale agora com a gente pelo WhatsApp.</p>
+      <div class="acoes">
+        <a class="botao principal" href="https://wa.me/5554981299854" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+        <a class="botao" href="/">Voltar ao site</a>
+      </div>
+    </section>
+    <footer>Agile Solution LTDA · CNPJ 45.295.711/0001-79 · Itajaí/SC · <a href="/privacidade">Política de Privacidade</a></footer>
+  </main>
+  <script src="../js/consentimento.js"></script>
+</body>
+</html>

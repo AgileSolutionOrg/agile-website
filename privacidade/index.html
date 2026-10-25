@@ -7,9 +7,13 @@
   <meta name="description" content="Como a Agile Solution trata dados pessoais no site, nos serviços, nos produtos e nas redes sociais, conforme a LGPD.">
   <link rel="canonical" href="https://agilesolution.com.br/privacidade">
   <link rel="icon" href="../img/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Mesma CSP do index.html (ver o comentario la). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <link rel="stylesheet" href="../css/fontes.css">
+  <link rel="stylesheet" href="../css/consentimento.css">
   <style>
+    /* Esta pagina sempre usou o 400 de verdade (ver css/fontes.css). */
+    @font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fontes/montserrat-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
     :root { --azul: #1F4B8D; --carmim: #AF3346; --fundo: #EDF1F8; --texto: #1A202C; --suave: #4A5A75; --linha: #D6DEEB; }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Montserrat, system-ui, sans-serif; background: var(--fundo); color: var(--texto); line-height: 1.65; }
@@ -46,7 +50,7 @@
   <main>
     <article class="cartao">
       <h1>Política de Privacidade</h1>
-      <p class="vigencia">Vigente desde 21 de outubro de 2026</p>
+      <p class="vigencia">Vigente desde 25 de outubro de 2026</p>
 
       <p>
         Esta política explica como a <b>Agile Solution LTDA</b> (CNPJ 45.295.711/0001-79, Rua Onze de Junho, 309,
@@ -64,7 +68,7 @@
       <h2><span>1.</span>Quais dados tratamos</h2>
       <ul>
         <li><b>Contato pelo site, e-mail ou WhatsApp:</b> nome, e-mail, telefone, empresa e o conteúdo da mensagem que você envia.</li>
-        <li><b>Navegação no site:</b> dados técnicos e de uso (páginas visitadas, tipo de dispositivo e navegador, cidade aproximada), coletados pelo Google Analytics por meio de cookies.</li>
+        <li><b>Navegação no site:</b> dados técnicos e de uso (páginas visitadas, tipo de dispositivo e navegador, cidade aproximada), coletados pelo Google Analytics por meio de cookies, <b>somente se você aceitar</b>.</li>
         <li><b>Clientes e contratos:</b> dados de contato dos representantes da empresa contratante, dados de faturamento e o histórico do atendimento.</li>
         <li><b>Redes sociais da Agile:</b> quando usamos as APIs da Meta (Instagram) para publicar e acompanhar os <b>nossos próprios perfis</b>, tratamos o conteúdo das publicações, as métricas agregadas dos perfis (alcance, curtidas, seguidores) e os comentários e mensagens feitos nesses perfis.</li>
         <li><b>Dados dentro dos sistemas dos clientes:</b> nos projetos e produtos, podemos acessar dados que pertencem ao cliente (por exemplo, cadastros do ERP). Nesses casos, quem decide sobre esses dados é o cliente; a Agile atua como <b>operadora</b>, só segundo as instruções e o contrato do cliente.</li>
@@ -77,7 +81,7 @@
           <tr><th>Finalidade</th><th>Base legal (LGPD, art. 7º)</th></tr>
           <tr><td>Responder contatos, enviar propostas e orçamentos</td><td>Procedimentos preliminares a contrato, a seu pedido (inc. V)</td></tr>
           <tr><td>Prestar os serviços contratados, dar suporte e faturar</td><td>Execução de contrato (inc. V) e cumprimento de obrigação legal (inc. II)</td></tr>
-          <tr><td>Medir o uso do site para melhorá-lo</td><td>Legítimo interesse (inc. IX)</td></tr>
+          <tr><td>Medir o uso do site para melhorá-lo</td><td>Consentimento (inc. I), dado no aviso de cookies; você pode retirá-lo quando quiser</td></tr>
           <tr><td>Publicar conteúdo e acompanhar os resultados dos nossos perfis nas redes sociais</td><td>Legítimo interesse (inc. IX)</td></tr>
           <tr><td>Enviar novidades da Agile por e-mail ou mensagem</td><td>Consentimento (inc. I); você pode cancelar quando quiser</td></tr>
         </table>
@@ -99,7 +103,7 @@
       <p>Só com fornecedores necessários para operar, e cada um recebe apenas o que precisa:</p>
       <ul>
         <li><b>Hospedagem e infraestrutura:</b> GitHub (site) e DigitalOcean (sistemas).</li>
-        <li><b>Medição do site:</b> Google Analytics.</li>
+        <li><b>Medição do site:</b> Google Analytics, somente com o seu consentimento.</li>
         <li><b>Envio de formulários e e-mails:</b> FormSubmit e Brevo.</li>
         <li><b>Redes sociais e mensagens:</b> Meta (Instagram e WhatsApp).</li>
         <li><b>Inteligência artificial:</b> nos produtos que usam IA, o texto necessário para a tarefa pode ser processado pela OpenAI, sem uso para treinar modelos.</li>
@@ -117,9 +121,19 @@
 
       <h2><span>6.</span>Cookies</h2>
       <p>
-        O site usa cookies do Google Analytics para entender como ele é usado. Você pode bloquear ou apagar cookies
-        nas configurações do seu navegador. O site continua funcionando sem eles.
+        O site só usa cookies de medição de audiência (Google Analytics), e eles <b>só são gravados depois que você
+        clica em "Aceitar"</b> no aviso de cookies. Sem a sua escolha, ou se você recusar, nenhum script de medição é
+        carregado. Os recursos de publicidade do Google (Google Signals e personalização de anúncios) ficam
+        desligados: os dados servem só para entender como o site é usado.
       </p>
+      <p>
+        Você pode mudar de ideia a qualquer momento, pelo link <b>"Preferências de cookies"</b> no rodapé do site ou
+        pelo botão abaixo. Ao recusar, apagamos os cookies do Google Analytics deste site no seu navegador. As fontes
+        e os ícones do site são servidos pelo próprio site, sem chamar serviços de terceiros. O site continua
+        funcionando normalmente sem os cookies.
+      </p>
+      <p><button type="button" class="aviso-cookies-recusar" data-preferencias-cookies
+        style="font: 700 14px Montserrat, system-ui, sans-serif; border-radius: 8px; padding: 10px 20px; cursor: pointer">Preferências de cookies</button></p>
 
       <h2><span>7.</span>Segurança</h2>
       <p>
@@ -167,5 +181,6 @@
     </article>
     <footer>Agile Solution LTDA · CNPJ 45.295.711/0001-79 · Itajaí/SC · Agilidade &amp; soluções — desafiando o futuro</footer>
   </main>
+  <script src="../js/consentimento.js"></script>
 </body>
 </html>
