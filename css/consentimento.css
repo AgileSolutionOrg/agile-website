@@ -1,0 +1,78 @@
+/* Aviso de cookies montado por js/consentimento.js. */
+.aviso-cookies {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
+  max-width: 760px;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #1f2a3d;
+  border: 1px solid #d6deec;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(15, 35, 70, .22);
+  padding: 20px;
+  font: 500 14px/1.6 'Montserrat', system-ui, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aviso-cookies-texto {
+  margin: 0;
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+.aviso-cookies-texto a {
+  color: #1F4B8C;
+  font-weight: 700;
+}
+
+.aviso-cookies-botoes {
+  display: flex;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.aviso-cookies-botoes button {
+  font: 700 14px 'Montserrat', system-ui, sans-serif;
+  border-radius: 8px;
+  padding: 11px 22px;
+  cursor: pointer;
+}
+
+.aviso-cookies-recusar {
+  background: #ffffff;
+  color: #1F4B8C;
+  border: 1px solid #1F4B8C;
+}
+
+.aviso-cookies-aceitar {
+  background: #1F4B8C;
+  color: #ffffff;
+  border: 1px solid #1F4B8C;
+}
+
+.aviso-cookies-aceitar:hover {
+  background: #163a6c;
+}
+
+.aviso-cookies-botoes button:focus-visible {
+  outline: 3px solid #9cb6e0;
+  outline-offset: 2px;
+}
+
+/* Botao do rodape que reabre o aviso: cor e sublinhado vem do .email-rodape,
+   aqui so tiramos a cara de botao nativo. */
+.botao-preferencias-cookies {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}

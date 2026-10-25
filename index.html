@@ -156,17 +156,17 @@
   }
   </script>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5XQV3RKLJ1">
-  </script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+  <!--
+    Google Analytics: so depois do "Aceitar" no aviso de cookies (js/consentimento.js).
+    Ate 25/10/2026 o gtag ficava aqui e gravava cookie na abertura, sem perguntar.
 
-    gtag('config', 'G-5XQV3RKLJ1');
-  </script>
+    CSP: o GitHub Pages nao deixa mandar cabecalho, entao ela vai em <meta>.
+    Recurso novo de outro dominio (script, fonte, imagem, iframe) tem que
+    entrar aqui, senao o navegador bloqueia e o console avisa.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fontes.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/secao-principal.css">
@@ -180,6 +180,7 @@
   <link rel="stylesheet" href="css/secao-contato.css">
   <link rel="stylesheet" href="css/efeitos.css">
   <link rel="stylesheet" href="css/whats.css">
+  <link rel="stylesheet" href="css/consentimento.css">
 </head>
 
 <a href="https://wa.me/5554981299854" class="whats-flutuante drop-in anim-delay-1" target="_blank"
@@ -403,7 +404,7 @@
 
         <div class="coluna-imagem-topo">
           <div class="container-imagem-topo container-imagem-topo3"> <img src="img/imagem-integracao.png"
-              alt="Agile Integracao" class="imagem-int blur-in anim-delay-4"></div>
+              alt="Agile Integracao" class="imagem-int blur-in anim-delay-4" loading="lazy" decoding="async"></div>
         </div>
       </div>
     </section>
@@ -661,7 +662,7 @@
             </ul>
           </article>
 
-          <article class="cartao-produto clicavel" onclick="window.open('https://www.agilerobots.com.br','_blank','noopener')">
+          <article class="cartao-produto clicavel">
             <div class="icone-produto"><i data-lucide="bot"></i></div>
             <h3 class="nome-produto">Agile <b>Robots</b></h3>
             <p class="tagline-produto">Automação inteligente de processos</p>
@@ -669,7 +670,7 @@
               Robôs (RPA) que executam tarefas repetitivas e integram sistemas: validação, processamento de
               documentos e rotinas personalizadas, reduzindo erros e liberando a equipe.
             </p>
-            <span class="link-produto">Acessar portal <i data-lucide="arrow-up-right"></i></span>
+            <a class="link-produto" href="https://www.agilerobots.com.br" target="_blank" rel="noopener">Acessar portal <i data-lucide="arrow-up-right"></i></a>
           </article>
 
           <article class="cartao-produto">
@@ -692,7 +693,7 @@
             </p>
           </article>
 
-          <article class="cartao-produto clicavel" onclick="window.open('https://agilecred.com.br','_blank','noopener')">
+          <article class="cartao-produto clicavel">
             <div class="icone-produto"><i data-lucide="trending-up"></i></div>
             <h3 class="nome-produto">Agile <b>Cred</b></h3>
             <p class="tagline-produto">Crédito inteligente</p>
@@ -700,10 +701,10 @@
               Análise de crédito a partir de múltiplas fontes, com o <b>ICA</b> (Índice de Confiança Ágil)
               para decisões mais rápidas e mais seguras.
             </p>
-            <span class="link-produto">Acessar portal <i data-lucide="arrow-up-right"></i></span>
+            <a class="link-produto" href="https://agilecred.com.br" target="_blank" rel="noopener">Acessar portal <i data-lucide="arrow-up-right"></i></a>
           </article>
 
-          <article class="cartao-produto clicavel" onclick="window.open('https://agilebuy.com.br','_blank','noopener')">
+          <article class="cartao-produto clicavel">
             <div class="icone-produto"><i data-lucide="shopping-cart"></i></div>
             <h3 class="nome-produto">Agile <b>Buy</b></h3>
             <p class="tagline-produto">Compras inteligentes</p>
@@ -711,7 +712,7 @@
               Da necessidade ao pedido: solicitação, aprovação, cotação com fornecedores por link, negociação
               com IA e o pedido gravado direto no ERP — sem trocar o sistema que a empresa já usa.
             </p>
-            <span class="link-produto">Conhecer o Agile Buy <i data-lucide="arrow-up-right"></i></span>
+            <a class="link-produto" href="https://agilebuy.com.br" target="_blank" rel="noopener">Conhecer o Agile Buy <i data-lucide="arrow-up-right"></i></a>
           </article>
 
           <article class="cartao-produto">
@@ -796,6 +797,9 @@
             <input type="hidden" name="_subject" value="Novo contato pelo site Agile Solution">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="https://agilesolution.com.br/obrigado/">
+            <!-- Isca para robo: escondida de gente, o FormSubmit descarta o envio que vier com ela preenchida. -->
+            <input type="text" name="_honey" class="campo-isca" tabindex="-1" autocomplete="off" aria-hidden="true">
 
             <div class="grupo-campo-contato">
               <label for="email-contato">E-mail</label>
@@ -821,6 +825,10 @@
             </div>
 
             <button type="submit" class="botao-contato zoom-in anim-delay-3">Enviar mensagem</button>
+            <p class="aviso-dados-contato">
+              Usamos estes dados só para responder ao seu contato. Veja a
+              <a href="/privacidade">Política de Privacidade</a>.
+            </p>
           </form>
         </div>
       </div>
@@ -846,13 +854,16 @@
           </a>
           <p class="telefone-rodape">+55 5498129-9854</p>
           <a href="/privacidade" class="email-rodape" style="font-size:.85em;opacity:.85">Política de Privacidade</a>
+          <button type="button" class="email-rodape botao-preferencias-cookies" data-preferencias-cookies
+            style="font-size:.85em;opacity:.85">Preferências de cookies</button>
 
           <div class="redes-rodape">
             <a class="icone-rede" href="https://www.instagram.com/agilesolution.oficial" target="_blank"
-              rel="noopener noreferrer"></a>
-            <a class="icone-rede" href="https://wa.me/5554981299854" target="_blank" rel="noopener noreferrer"></a>
+              rel="noopener noreferrer" aria-label="Instagram da Agile Solution"></a>
+            <a class="icone-rede" href="https://wa.me/5554981299854" target="_blank" rel="noopener noreferrer"
+              aria-label="WhatsApp da Agile Solution"></a>
             <a class="icone-rede" href="https://www.linkedin.com/company/agilesolution" target="_blank"
-              rel="noopener noreferrer"></a>
+              rel="noopener noreferrer" aria-label="LinkedIn da Agile Solution"></a>
           </div>
         </div>
       </div>
@@ -933,12 +944,9 @@
   <script src="js/mapa-presenca.js"></script>
   <script src="js/titulo-typing.js"></script>
   <script src="js/painel-agile.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      lucide.createIcons();
-    });
-  </script>
+  <script src="js/icones.js"></script>
+  <script src="js/cartoes-produto.js"></script>
+  <script src="js/consentimento.js"></script>
 
 </body>
 

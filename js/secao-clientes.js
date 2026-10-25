@@ -23,8 +23,17 @@ if (faixasClientes.length) {
       let pausado = false
       const velocidade = 0.35
 
+      // Fora da tela a faixa nao anda: mexer no scrollLeft a cada quadro forca
+      // recalculo de layout, e o Lighthouse media ~6 s de CPU so neste arquivo.
+      let visivel = true
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entradas) => {
+          visivel = entradas[0].isIntersecting
+        }).observe(faixa)
+      }
+
       function animar() {
-        if (!pausado) {
+        if (!pausado && visivel) {
           pos += velocidade * direcao
 
           if (direcao === 1 && pos >= limite) {
