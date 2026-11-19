@@ -79,6 +79,15 @@ body.montador .card{padding:14px 16px;gap:10px}
 body.montador .big{font-size:1.5rem}
 body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
 @media (min-width:761px){body.montador .stage{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}body.montador .view{height:72vh;margin-inline:0;border-radius:10px;border-top:1px solid var(--line)}}
+.ler{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--red);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-size:1rem;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.ler:hover{filter:brightness(1.05)}
+body{padding-bottom:84px}
+.scan{position:fixed;inset:0;z-index:30;background:rgba(10,12,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.scan video{width:100%;max-width:520px;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#000;border:2px solid var(--red)}
+.scan p{color:#e8ecea;margin:0;text-align:center;max-width:520px;font-size:.92rem}
+.scan form{display:flex;gap:8px;width:100%;max-width:520px}
+.scan input{flex:1;min-width:0;font:inherit;font-size:1rem;padding:10px 12px;border-radius:8px;border:1px solid #556;background:#fff;color:#111}
+.scan button{font-size:.95rem;padding:10px 14px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -116,13 +125,25 @@ body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
     <div class="chips" id="pedidos"></div>
     <h2>Etiquetas das peças (como sairiam da fábrica)</h2>
     <p class="note" id="resumo"></p>
-    <p class="note">Abra no computador e leia um QR com a câmera do celular, sem login e sem app. Ou toque numa etiqueta para simular a leitura.</p>
+    <p class="note"><b>Sem mudar nada na fábrica:</b> no celular, toque em <b>Ler etiqueta</b> e aponte para o código de barras da etiqueta laranja que já vai na peça (a mesma que o Agile Check lê). Nesta demonstração, o pedido 120949 tem as etiquetas reais. As etiquetas com QR abaixo são a outra opção, caso a fábrica um dia imprima o QR.</p>
     <div class="sheet" id="sheet"></div>
   </section>
 </div>
 
+<button class="ler" id="bLer" type="button">Ler etiqueta</button>
+<div class="scan" id="scan" hidden>
+  <video id="scanVideo" muted playsinline></video>
+  <p id="scanMsg">Aponte a câmera para o código de barras da etiqueta laranja.</p>
+  <form id="fDigitar">
+    <input id="iCodigo" inputmode="numeric" autocomplete="off" placeholder="Ou digite o número (ex.: 0070584609)" aria-label="Número da etiqueta">
+    <button type="submit">Abrir</button>
+  </form>
+  <button id="bFechar" type="button">Fechar</button>
+</div>
+
 <script src="vendor/three.min.js"></script>
 <script src="vendor/qrcode.min.js"></script>
+<script src="vendor/zxing.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
