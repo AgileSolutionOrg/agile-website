@@ -215,7 +215,7 @@ async function abrirEtiqueta(txt) {
 let leitor = null;
 async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
 $("#bLer").onclick = async () => {
-  $("#scan").hidden = false; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
+  $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
   try {
     const hints = new Map();
     hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE]);
