@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QR de Montagem | Agile Solution</title>
+<!-- Esboço de demonstração (Romanzza, 19/11/2026). Fora do menu e do Google de propósito: só abre quem recebe o link ou lê o QR. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Esboço: QR na etiqueta de cada peça abre o 3D do móvel com a peça destacada.">
+<link rel="icon" href="../img/favicon.png">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<link rel="stylesheet" href="../css/fontes.css">
+<style>
+/* Layout: oficina — painel 3D grande + ficha da peça; abaixo a folha de etiquetas como sai da fábrica */
+:root{
+  --bg:#f3f4f2; --panel:#ffffff; --ink:#1d2321; --muted:#5f6a66; --line:#d6dbd8;
+  --red:#d7263d; --mdf:#e9ecea; --orion:#c9a77c; --chip:#e7ece9; --label:#fffef8;
+  --sans:"Montserrat",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141817; --panel:#1d2321; --ink:#e8ecea; --muted:#9aa5a0; --line:#323b38;
+  --red:#ff4d5e; --mdf:#3a4340; --orion:#8a6d4c; --chip:#28302d; --label:#f6f4ea; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141817; --panel:#1d2321; --ink:#e8ecea; --muted:#9aa5a0; --line:#323b38;
+  --red:#ff4d5e; --mdf:#3a4340; --orion:#8a6d4c; --chip:#28302d; --label:#f6f4ea; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 16px}
+h1{font-size:1.35rem;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.note{font-size:.82rem;color:var(--muted);max-width:60ch;margin:0}
+.note b{color:var(--ink)}
+.stage{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.stage{grid-template-columns:1fr}}
+.view{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-height:340px;aspect-ratio:4/3.2;max-width:100%}
+#cv{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.hint{position:absolute;left:10px;bottom:8px;font-size:.72rem;color:var(--muted);font-family:var(--mono);pointer-events:none}
+.tools{position:absolute;right:8px;top:8px;display:flex;gap:6px}
+button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,.lbl:focus-visible,.row:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.big{font-size:1.15rem;font-weight:700;line-height:1.25;text-wrap:balance}
+.where{background:color-mix(in srgb,var(--red) 10%,var(--panel));border-left:4px solid var(--red);padding:10px 12px;border-radius:6px;font-size:.92rem}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:.86rem}
+dt{color:var(--muted)} dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.list{display:flex;flex-direction:column;gap:2px;font-size:.84rem}
+.row{display:flex;gap:8px;align-items:center;padding:5px 6px;border-radius:5px;cursor:pointer}
+.row:hover{background:var(--chip)}
+.row.on{background:color-mix(in srgb,var(--red) 14%,var(--panel));font-weight:600}
+.sw{width:10px;height:10px;border-radius:2px;flex:none;border:1px solid var(--line)}
+.n{font-family:var(--mono);color:var(--muted);width:2.2em;flex:none}
+h2{font-size:1rem;margin:0}
+.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.lbl{background:var(--label);color:#1a1a1a;border:1px dashed #9a9a92;border-radius:4px;padding:10px;display:grid;grid-template-columns:1fr 92px;gap:6px 10px;font-family:var(--mono);font-size:.7rem;line-height:1.35;cursor:pointer}
+.lbl .t{grid-column:1/-1;font-family:var(--sans);font-weight:700;font-size:.8rem;line-height:1.2;color:#1a1a1a}
+.lbl .qr{width:92px;height:92px;background:#fff;padding:3px}
+.lbl .qr img,.lbl .qr canvas{width:100%!important;height:100%!important;image-rendering:pixelated}
+.lbl .ft{grid-column:1/-1;display:flex;justify-content:space-between;border-top:1px solid #c8c8c0;padding-top:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Esboço · Pedido 121709 · WC Social · Gabinete Neve + Órion</div>
+      <h1 id="ttl">Onde vai esta peça?</h1>
+    </div>
+    <p class="note"><b>Esboço para testar a ideia.</b> Peças, medidas e códigos vêm do XML real do Promob (Builder) desse pedido. A <b>posição no móvel foi montada a partir da descrição</b> da peça, porque o XML não traz coordenadas. Na versão de verdade ela viria do Promob.</p>
+  </header>
+
+  <section class="stage">
+    <div class="view">
+      <canvas id="cv" aria-label="Modelo 3D do gabinete; arraste para girar"></canvas>
+      <div class="tools">
+        <button id="bPortas" type="button">Esconder portas</button>
+        <button id="bReset" type="button">Centralizar</button>
+      </div>
+      <div class="hint">arraste para girar · pinça ou roda para zoom · toque numa peça</div>
+    </div>
+    <aside class="card" aria-live="polite">
+      <div class="eyebrow" id="cnt">Peça</div>
+      <div class="big" id="nome">Toque numa peça ou leia uma etiqueta</div>
+      <div class="where" id="onde">Leia o QR de uma etiqueta abaixo com a câmera do celular.</div>
+      <dl id="ficha"></dl>
+      <div>
+        <div class="eyebrow" style="margin-bottom:4px">Peças deste módulo</div>
+        <div class="list" id="lista"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:10px">
+    <h2>Etiquetas das peças (como sairiam da fábrica)</h2>
+    <p class="note">Abra esta página no computador e leia um QR com a câmera do celular. Não precisa de login nem de app. Ou toque numa etiqueta para simular a leitura.</p>
+    <div class="sheet" id="sheet"></div>
+  </section>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
