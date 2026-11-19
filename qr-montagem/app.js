@@ -1,88 +1,76 @@
-// Link publicado desta página (os QR apontam para ele + #p<ID_PROMOB>)
+"use strict";
+// QR de Montagem — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
+// Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pelo QR).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
-
-// Peças do pedido 121709 (XML Builder PDV_1_121709). Medidas em mm. Posição = aproximação pela descrição.
-// box: [x0,x1, y0,y1, z0,z1]  (x = largura, y = altura, z = profundidade, frente = z maior)
-const PECAS = [
-  {id:"406596", nome:"Lateral esquerda", desc:"Lateral linear cozinha Esquerda c/ ranhura e furação - Neve", dim:"552 × 370 × 18", mat:"MDF 18mm 2F Neve", des:"STA00100180A", mod:"406594", acab:"mdf",
-   onde:"Lado ESQUERDO do gabinete (olhando de frente). Ranhura para dentro, furação de cima para as travessas.", box:[0,18, 0,552, 0,370]},
-  {id:"406595", nome:"Lateral direita", desc:"Lateral linear cozinha Direita c/ ranhura e furação - Neve", dim:"552 × 370 × 18", mat:"MDF 18mm 2F Neve", des:"STA00100179A", mod:"406594", acab:"mdf",
-   onde:"Lado DIREITO do gabinete (olhando de frente). Ranhura para dentro.", box:[662,680, 0,552, 0,370]},
-  {id:"406611", nome:"Base inferior", desc:"Base Inferior linear c/ ranhura e furação - Neve", dim:"644 × 370 × 18", mat:"MDF 18mm 2F Neve", des:"RET00065597A", mod:"406594", acab:"mdf",
-   onde:"Fundo do gabinete, entre as duas laterais, rente ao chão do móvel.", box:[18,662, 0,18, 0,370]},
-  {id:"406617", nome:"Prateleira", desc:"Prateleira linear c/ furação - Neve", dim:"644 × 360 × 18", mat:"MDF 18mm 2F Neve", des:"PRA00035911A", mod:"406594", acab:"mdf",
-   onde:"No meio do gabinete, sobre 4 suportes (kit de suportes de prateleira). 10 mm recuada da frente.", box:[18,662, 267,285, 0,360]},
-  {id:"406694", nome:"Travessa superior traseira", desc:"Travessa linear c/ furação - Neve", dim:"644 × 80 × 18", mat:"MDF 18mm 2F Neve", des:"TRA00020961A", mod:"406692", acab:"mdf",
-   onde:"Em cima, ATRÁS, entre as laterais. É a travessa por onde o gabinete é fixado na parede (cantoneiras).", box:[18,662, 534,552, 0,80]},
-  {id:"406693", nome:"Travessa superior frontal", desc:"Travessa linear c/ furação - Neve", dim:"644 × 80 × 18", mat:"MDF 18mm 2F Neve", des:"TRA00020961A", mod:"406692", acab:"mdf",
-   onde:"Em cima, na FRENTE, entre as laterais. Igual à traseira (mesmo desenho), troque se precisar.", box:[18,662, 534,552, 290,370]},
-  {id:"406651", nome:"Porta esquerda", desc:"Porta inferior Dob. Reta Veio vert. Orion", dim:"548 × 336,5 × 18,5", mat:"Órion (veio vertical)", des:"VEI00031144A", mod:"406633", acab:"orion",
-   onde:"Porta da ESQUERDA, dobradiça do lado esquerdo. Veio na vertical. Puxador Thin no topo.", box:[3,339.5, 3,549, 370,388.5]},
-  {id:"406674", nome:"Porta direita", desc:"Porta inferior Dob. Reta Veio vert. Orion", dim:"548 × 336,5 × 18,5", mat:"Órion (veio vertical)", des:"VEI00031145A", mod:"406656", acab:"orion",
-   onde:"Porta da DIREITA, dobradiça do lado direito. Veio na vertical. Puxador Thin no topo.", box:[340.5,677, 3,549, 370,388.5]},
-  {id:"406592", nome:"Vista de fechamento", desc:"Vista fechamento Órion", dim:"552 × 80 × 18", mat:"Órion", des:"—", mod:"406592", acab:"orion",
-   onde:"Fechamento à DIREITA do gabinete, na frente, até a parede lateral.", box:[680,760, 0,552, 370,388]},
-  {id:"406591", nome:"Painel lateral", desc:"Painel Linear 18mm Órion", dim:"552 × 393 × 18", mat:"Órion", des:"—", mod:"406590", acab:"orion",
-   onde:"Painel de acabamento por FORA da lateral esquerda, alinhado com a frente das portas.", box:[-18,0, 0,552, 0,393]},
-];
-const EXTRAS = [ // puxadores: não recebem etiqueta, só aparecem no 3D
-  {box:[3,339.5, 549,560.5, 349.5,388.5], acab:"metal"}, {box:[340.5,677, 549,560.5, 349.5,388.5], acab:"metal"}
-];
+const PEDIDOS = ["121570", "121694", "121709"];
 
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-let sel = null, portasOcultas = false;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const cache = {};
+let ped = null, movel = null, sel = null, portasOcultas = false;
 
 // ---------- 3D ----------
 const cv = $("#cv");
-const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 const scene = new THREE.Scene();
-const cam = new THREE.PerspectiveCamera(35, 1, 10, 20000);
+const cam = new THREE.PerspectiveCamera(35, 1, 10, 50000);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.85));
 const sun = new THREE.DirectionalLight(0xffffff, 0.6); sun.position.set(600, 1200, 1400); scene.add(sun);
 const grp = new THREE.Group(); scene.add(grp);
-const CENTER = new THREE.Vector3(371, 276, 196);
-const baseColor = acab => acab === "orion" ? css("--orion") : acab === "metal" ? "#8d9496" : css("--mdf");
+let meshes = [], centro = new THREE.Vector3(), raio = 1000;
+const ehFrente = p => p && (p.tipo === "porta" || p.tipo === "frente");
+const corBase = p => (p && (ehFrente(p) || p.solo)) ? css("--orion") : css("--mdf");
 
-function addBox(b, acab, peca){
-  const [x0,x1,y0,y1,z0,z1] = b;
-  const g = new THREE.BoxGeometry(x1-x0, y1-y0, z1-z0);
-  const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({color:new THREE.Color(baseColor(acab)), transparent:true}));
-  m.position.set((x0+x1)/2-CENTER.x, (y0+y1)/2-CENTER.y, (z0+z1)/2-CENTER.z);
-  const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({color:0x4a5552, transparent:true, opacity:.55}));
-  m.add(e); m.userData = {peca, acab, edge:e}; grp.add(m); return m;
+function montarCena() {
+  grp.clear(); meshes = [];
+  const bb = new THREE.Box3();
+  for (const p of movel.pecas.filter(q => q.box)) {
+    const [x0, x1, y0, y1, z0, z1] = p.box;
+    const g = new THREE.BoxGeometry(Math.max(x1 - x0, 1), Math.max(y1 - y0, 1), Math.max(z1 - z0, 1));
+    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: new THREE.Color(corBase(p)), transparent: true }));
+    m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x4a5552, transparent: true, opacity: .55 }));
+    m.add(e); m.userData = { p, e }; grp.add(m); meshes.push(m); p.mesh = m;
+    bb.expandByPoint(new THREE.Vector3(x0, y0, z0)); bb.expandByPoint(new THREE.Vector3(x1, y1, z1));
+  }
+  if (bb.isEmpty()) bb.set(new THREE.Vector3(0, 0, 0), new THREE.Vector3(500, 500, 500));
+  bb.getCenter(centro); raio = Math.max(bb.getSize(new THREE.Vector3()).length() / 2, 200);
+  grp.position.copy(centro).multiplyScalar(-1);
 }
-const meshes = PECAS.map(p => (p.mesh = addBox(p.box, p.acab, p)));
-EXTRAS.forEach(x => addBox(x.box, x.acab, null));
-
-function paint(){
-  grp.children.forEach(m => {
-    const p = m.userData.peca, isSel = !!(p && sel && p.id === sel.id);
-    const frente = p ? /Porta/.test(p.nome) : true;   // portas e puxadores
-    m.material.color.set(isSel ? css("--red") : baseColor(m.userData.acab));
+function paint() {
+  const mont = document.body.classList.contains("montador");
+  const selEhFrente = ehFrente(sel);
+  for (const m of meshes) {
+    const p = m.userData.p, isSel = !!(sel && p.id === sel.id);
+    m.material.color.set(isSel ? css("--red") : corBase(p));
     let op = 1;
-    if (sel && !isSel) op = document.body.classList.contains("montador") ? (m.userData.acab === "mdf" ? .45 : .16) : .55;
-    if (frente && !isSel && (portasOcultas || (sel && !/Porta/.test(sel.nome)))) op = .12;
-    m.material.opacity = op; m.material.depthWrite = op > .5; m.userData.edge.material.opacity = op < .5 ? .15 : .55;
-  });
+    if (sel && !isSel) op = mont ? .45 : .55;
+    if (ehFrente(p) && !isSel && (portasOcultas || (sel && !selEhFrente))) op = .12;
+    m.material.opacity = op; m.material.depthWrite = op > .5; m.userData.e.material.opacity = op < .5 ? .15 : .55;
+  }
 }
 
-// órbita simples (arrastar, pinça, roda)
-let yaw = -0.55, pitch = 0.32, dist = 2300;
-function placeCam(){ const d = dist * Math.max(1, 0.95 / (cam.aspect || 1)); cam.position.set(Math.sin(yaw)*Math.cos(pitch)*d, Math.sin(pitch)*d, Math.cos(yaw)*Math.cos(pitch)*d); cam.lookAt(0,0,0); }
-function resize(){ const r = cv.getBoundingClientRect(); if (!r.width) return; renderer.setSize(r.width, r.height, false); cam.aspect = r.width/Math.max(r.height,1); cam.updateProjectionMatrix(); placeCam(); }
+let yaw = -0.55, pitch = 0.32, zoom = 1;
+function placeCam() {
+  const fit = raio / Math.sin((cam.fov * Math.PI / 180) / 2) * Math.max(1, 0.9 / (cam.aspect || 1));
+  const d = fit * zoom * 0.95;
+  cam.position.set(Math.sin(yaw) * Math.cos(pitch) * d, Math.sin(pitch) * d, Math.cos(yaw) * Math.cos(pitch) * d);
+  cam.lookAt(0, 0, 0);
+}
+function resize() { const r = cv.getBoundingClientRect(); if (!r.width) return; renderer.setSize(r.width, r.height, false); cam.aspect = r.width / Math.max(r.height, 1); cam.updateProjectionMatrix(); placeCam(); }
 new ResizeObserver(resize).observe(cv);
 const pts = new Map();
-cv.addEventListener("pointerdown", e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x:e.clientX, y:e.clientY, x0:e.clientX, y0:e.clientY}); });
+cv.addEventListener("pointerdown", e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY }); });
 cv.addEventListener("pointermove", e => {
   const p = pts.get(e.pointerId); if (!p) return;
-  if (pts.size === 2){
-    const [a,b] = [...pts.values()]; const d0 = Math.hypot(a.x-b.x, a.y-b.y);
-    p.x = e.clientX; p.y = e.clientY; const d1 = Math.hypot(a.x-b.x, a.y-b.y);
-    if (d1 > 0) dist = Math.min(6000, Math.max(700, dist * d0 / d1));
+  if (pts.size === 2) {
+    const [a, b] = [...pts.values()]; const d0 = Math.hypot(a.x - b.x, a.y - b.y);
+    p.x = e.clientX; p.y = e.clientY; const d1 = Math.hypot(a.x - b.x, a.y - b.y);
+    if (d1 > 0) zoom = Math.min(3, Math.max(.35, zoom * d0 / d1));
   } else {
-    yaw -= (e.clientX-p.x)*0.008; pitch = Math.min(1.35, Math.max(-0.2, pitch + (e.clientY-p.y)*0.006));
+    yaw -= (e.clientX - p.x) * 0.008; pitch = Math.min(1.35, Math.max(-0.2, pitch + (e.clientY - p.y) * 0.006));
     p.x = e.clientX; p.y = e.clientY;
   }
   placeCam();
@@ -90,79 +78,111 @@ cv.addEventListener("pointermove", e => {
 const ray = new THREE.Raycaster();
 cv.addEventListener("pointerup", e => {
   const p = pts.get(e.pointerId); pts.delete(e.pointerId);
-  if (p && Math.hypot(e.clientX-p.x0, e.clientY-p.y0) < 6 && pts.size === 0){
+  if (p && Math.hypot(e.clientX - p.x0, e.clientY - p.y0) < 6 && pts.size === 0) {
     const r = cv.getBoundingClientRect();
-    ray.setFromCamera({x:((e.clientX-r.left)/r.width)*2-1, y:-((e.clientY-r.top)/r.height)*2+1}, cam);
-    const hits = ray.intersectObjects(meshes, false);
-    const hit = hits.find(h => h.object.material.opacity > .3) || hits[0];
-    if (hit) go(hit.object.userData.peca.id);
+    ray.setFromCamera({ x: ((e.clientX - r.left) / r.width) * 2 - 1, y: -((e.clientY - r.top) / r.height) * 2 + 1 }, cam);
+    const hits = ray.intersectObjects(meshes, false); const hit = hits.find(h => h.object.material.opacity > .3) || hits[0];
+    if (hit) irPeca(hit.object.userData.p.id);
   }
 });
 cv.addEventListener("pointercancel", e => pts.delete(e.pointerId));
-cv.addEventListener("wheel", e => { e.preventDefault(); dist = Math.min(6000, Math.max(700, dist * (1 + e.deltaY*0.001))); placeCam(); }, {passive:false});
-
+cv.addEventListener("wheel", e => { e.preventDefault(); zoom = Math.min(3, Math.max(.35, zoom * (1 + e.deltaY * 0.001))); placeCam(); }, { passive: false });
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-function loop(t){
-  if (sel && !reduce){ const k = 1 + .18*Math.sin(t/260); sel.mesh.material.color.set(css("--red")).multiplyScalar(k); }
+(function loop(t) {
+  if (sel && sel.mesh && !reduce) sel.mesh.material.color.set(css("--red")).multiplyScalar(1 + .18 * Math.sin(t / 260));
   renderer.render(scene, cam); requestAnimationFrame(loop);
-}
+})(0);
 
-// ---------- ficha ----------
-function go(id){ if (location.hash !== "#p"+id) location.hash = "p"+id; else show(); }
-function show(){
-  const id = (location.hash.match(/^#p(\d+)$/) || [])[1];
-  sel = PECAS.find(p => p.id === id) || null;
-  const montador = !!sel;
-  document.body.classList.toggle("montador", montador);
-  $("#dFicha").open = !montador;
-  $("#dLista").open = !montador;
-  dist = montador ? 1550 : 2300;
-  requestAnimationFrame(resize);
-  if (sel){
-    const i = PECAS.indexOf(sel) + 1;
-    $("#cnt").textContent = `Pedido 121709 · WC Social · peça ${i} de ${PECAS.length}`;
-    $("#nome").textContent = sel.nome;
-    $("#ttl").textContent = sel.nome;
-    $("#onde").textContent = sel.onde;
-    $("#ficha").innerHTML = [["Descrição", sel.desc], ["Medida", sel.dim + " mm"], ["Material", sel.mat], ["Desenho", sel.des], ["Módulo Promob", sel.mod], ["Peça Promob", sel.id], ["Pedido", "121709 · WC Social"]]
-      .map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
-    if (/Porta/.test(sel.nome)) { yaw = -0.35; pitch = 0.2; }
-    else if (/esquerda|Painel/i.test(sel.nome)) { yaw = -1.0; pitch = 0.35; }
-    else if (/direita|Vista/i.test(sel.nome)) { yaw = 0.8; pitch = 0.35; }
-    else { yaw = -0.45; pitch = 0.55; }
-    placeCam();
-    document.title = sel.nome + " | Onde vai esta peça";
-  } else {
-    $("#cnt").textContent = "Gabinete WC Social · 10 peças";
-    $("#nome").textContent = "Toque numa peça ou leia uma etiqueta";
-    $("#ttl").textContent = "Onde vai esta peça?";
-    $("#onde").textContent = "Leia o QR de uma etiqueta abaixo com a câmera do celular.";
-    $("#ficha").innerHTML = "";
-    document.title = "QR de Montagem | Agile Solution";
-    placeCam();
+// ---------- dados ----------
+async function carregar(n) {
+  if (!cache[n]) {
+    const r = await fetch("pedidos/" + n + ".json"); if (!r.ok) throw new Error("pedido " + n + " não encontrado");
+    const d = await r.json();
+    const grupos = {}; // peças iguais (mesma descrição e medida) → "3 de 14 iguais"
+    d.moveis.forEach(m => m.pecas.forEach(p => { const k = p.desc + "|" + p.dim; (grupos[k] = grupos[k] || []).push(p); }));
+    Object.values(grupos).forEach(l => l.forEach((p, i) => { p.iguais = l.length; p.iguaisN = i + 1; }));
+    cache[n] = d;
   }
-  $("#lista").innerHTML = PECAS.map((p,i) => `<div class="row${sel===p?" on":""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i+1).padStart(2,"0")}</span><span class="sw" style="background:${sel===p?"var(--red)":p.acab==="orion"?"var(--orion)":"var(--mdf)"}"></span>${p.nome}</div>`).join("");
-  paint();
+  return cache[n];
 }
-const toTop = () => scrollTo({top:0, behavior: reduce ? "auto" : "smooth"});
-$("#lista").addEventListener("click", e => { const r = e.target.closest(".row"); if (r) { go(r.dataset.id); toTop(); } });
-$("#lista").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) go(e.target.dataset.id); });
-$("#bReset").onclick = () => { yaw = -0.55; pitch = 0.32; dist = 2300; placeCam(); };
+const pedidoAtual = () => (location.hash.match(/^#(\d+)/) || [])[1] || PEDIDOS[0];
+const pecaAtual = () => (location.hash.match(/^#\d+-p(\d+)$/) || [])[1] || null;
+function irPeca(id) { const h = "#" + ped.pedido + "-p" + id; if (location.hash !== h) location.hash = h; else render(); }
+
+// ---------- tela ----------
+function frasePosicao(p) {
+  if (!p.onde) return "Peça sem regra de posição ainda: veja os detalhes.";
+  return p.onde + (p.solo && p.iguais > 1 ? ` Esta é a ${p.iguaisN}ª de ${p.iguais} peças iguais neste pedido.` : "");
+}
+function ficha(p) {
+  return [["Descrição", p.desc], ["Medida", p.dim + " mm"], ["Desenho", p.des], ["Código", p.cod], ["Peça Promob", p.id], ["Pedido", ped.pedido + (ped.ambiente ? " · " + ped.ambiente : "")]]
+    .map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+}
+async function render() {
+  const n = pedidoAtual();
+  try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou o QR da etiqueta."; return; }
+  const id = pecaAtual();
+  sel = null; movel = null;
+  if (id) for (const m of ped.moveis) { const p = m.pecas.find(q => q.id === id); if (p) { sel = p; movel = m; break; } }
+  if (!movel) movel = ped.moveis.find(m => m.caixa) || ped.moveis[0];
+  const mont = !!sel;
+  document.body.classList.toggle("montador", mont);
+  $("#dFicha").open = !mont; $("#dLista").open = !mont; $("#dFicha").hidden = !sel;
+  montarCena(); zoom = 1;
+  const t = sel && sel.tipo;
+  if (!sel || sel.solo) { yaw = -0.55; pitch = 0.32; }
+  else if (ehFrente(sel)) { yaw = -0.35; pitch = 0.2; }
+  else if (t === "lateral_e") { yaw = -1.0; pitch = 0.35; }
+  else if (t === "lateral_d") { yaw = 0.9; pitch = 0.35; }
+  else if (t === "fundo") { yaw = -2.6; pitch = 0.35; }
+  else if (t === "base_inf" || t === "rodape") { yaw = -0.45; pitch = 0.75; }
+  else { yaw = -0.45; pitch = 0.5; }
+  resize();
+  const idx = movel.pecas.indexOf(sel) + 1;
+  $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${movel.pecas.length}` : "");
+  $("#nome").textContent = sel ? sel.nome : "Leia o QR de uma etiqueta";
+  $("#onde").textContent = sel ? frasePosicao(sel) : "Ou toque numa etiqueta abaixo para simular a leitura.";
+  $("#ficha").innerHTML = sel ? ficha(sel) : "";
+  $("#dLista").hidden = !!movel.solo;
+  $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
+  document.title = sel ? `${sel.nome} | Onde vai esta peça` : "QR de Montagem | Agile Solution";
+  paint();
+  if (!mont) folha();
+}
+$("#lista").addEventListener("click", e => { const r = e.target.closest(".row"); if (r) { irPeca(r.dataset.id); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } });
+$("#lista").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) irPeca(e.target.dataset.id); });
+$("#bReset").onclick = () => { zoom = 1; yaw = -0.55; pitch = 0.32; placeCam(); };
 $("#bPortas").onclick = () => { portasOcultas = !portasOcultas; $("#bPortas").textContent = portasOcultas ? "Mostrar portas" : "Esconder portas"; paint(); };
-addEventListener("hashchange", show);
+addEventListener("hashchange", render);
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paint);
-new MutationObserver(paint).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
-// ---------- etiquetas ----------
-$("#sheet").innerHTML = PECAS.map((p,i) => `
-  <div class="lbl" tabindex="0" role="button" data-id="${p.id}" aria-label="Etiqueta ${p.nome}">
-    <div class="t">${p.desc}</div>
-    <div>PED 121709 · WC SOCIAL<br>${p.dim} mm<br>${p.mat}<br>DES ${p.des}<br>MOD ${p.mod}</div>
-    <div class="qr" id="qr${p.id}"></div>
-    <div class="ft"><span>ROMANZZA</span><span>${String(i+1).padStart(2,"0")}/${PECAS.length} · P${p.id}</span></div>
-  </div>`).join("");
-PECAS.forEach(p => { try { new QRCode(document.getElementById("qr"+p.id), {text: BASE_URL + "#p" + p.id, width:172, height:172, correctLevel: QRCode.CorrectLevel.M}); } catch(e){} });
-$("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl"); if (l) { go(l.dataset.id); toTop(); } });
-$("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) go(e.target.dataset.id); });
+// ---------- folha de etiquetas do pedido ----------
+let folhaDe = null;
+function folha() {
+  $("#pedidos").innerHTML = PEDIDOS.map(n => `<a href="#${n}" class="chip${n === ped.pedido ? " on" : ""}">Pedido ${n}</a>`).join("");
+  const pc = v => Math.round(100 * v / Math.max(ped.total, 1));
+  $("#resumo").textContent = `${ped.total} peças · ${ped.em3d} montadas no móvel (${pc(ped.em3d)}%) · ${ped.soltas} peças do ambiente (${pc(ped.soltas)}%) · ${ped.moveis.filter(m => m.caixa).length} móveis`;
+  if (folhaDe === ped.pedido) return; folhaDe = ped.pedido;
+  const caixas = ped.moveis.filter(m => m.caixa), soltos = ped.moveis.filter(m => !m.caixa);
+  const etiqueta = (p, m) => `
+    <div class="lbl" tabindex="0" role="button" data-id="${p.id}" aria-label="Etiqueta ${esc(p.nome)}">
+      <div class="t">${esc(p.desc)}</div>
+      <div>PED ${ped.pedido}<br>${esc(m.nome)}<br>${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
+      <div class="qr" data-qr="${BASE_URL}#${ped.pedido}-p${p.id}"></div>
+      <div class="ft"><span>ROMANZZA</span><span>P${p.id}</span></div>
+    </div>`;
+  $("#sheet").innerHTML =
+    caixas.map(m => `<h3>${esc(m.nome)} <small>${Math.round(m.dims.W)} × ${Math.round(m.dims.H)} × ${Math.round(m.dims.D)} mm · ${m.pecas.length} peças</small></h3><div class="grade">${m.pecas.map(p => etiqueta(p, m)).join("")}</div>`).join("") +
+    (soltos.length ? `<h3>Peças do ambiente <small>painéis, ripas e vistas · ${soltos.length} peças</small></h3><div class="grade">${soltos.map(m => etiqueta(m.pecas[0], m)).join("")}</div>` : "");
+  // QR gerado quando a etiqueta chega perto da tela (pedido grande tem centenas)
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return; const el = en.target; io.unobserve(el);
+    try { new QRCode(el, { text: el.dataset.qr, width: 172, height: 172, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { /* sem QR */ }
+  }), { rootMargin: "400px" });
+  document.querySelectorAll("#sheet .qr[data-qr]").forEach(a => io.observe(a));
+}
+$("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl"); if (l) { irPeca(l.dataset.id); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } });
+$("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) irPeca(e.target.dataset.id); });
 
-placeCam(); resize(); show(); requestAnimationFrame(loop);
+render();
