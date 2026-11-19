@@ -2,13 +2,13 @@
 // QR de Montagem — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
 // Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pelo QR).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
-const PEDIDOS = ["121570", "121694", "121709"];
+const PEDIDOS = ["120949", "121570", "121694", "121709"];
 
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const cache = {};
-let ped = null, movel = null, sel = null, portasOcultas = false;
+let ped = null, movel = null, sel = null, grupoSel = [], aviso = "", portasOcultas = false;
 
 // ---------- 3D ----------
 const cv = $("#cv");
@@ -43,7 +43,7 @@ function paint() {
   const mont = document.body.classList.contains("montador");
   const selEhFrente = ehFrente(sel);
   for (const m of meshes) {
-    const p = m.userData.p, isSel = !!(sel && p.id === sel.id);
+    const p = m.userData.p, isSel = !!(sel && (p.id === sel.id || grupoSel.includes(p.id)));
     m.material.color.set(isSel ? css("--red") : corBase(p));
     let op = 1;
     if (sel && !isSel) op = mont ? .45 : .55;
@@ -89,7 +89,7 @@ cv.addEventListener("pointercancel", e => pts.delete(e.pointerId));
 cv.addEventListener("wheel", e => { e.preventDefault(); zoom = Math.min(3, Math.max(.35, zoom * (1 + e.deltaY * 0.001))); placeCam(); }, { passive: false });
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 (function loop(t) {
-  if (sel && sel.mesh && !reduce) sel.mesh.material.color.set(css("--red")).multiplyScalar(1 + .18 * Math.sin(t / 260));
+  if (sel && !reduce) { const k = 1 + .18 * Math.sin(t / 260); meshes.forEach(m => { const p = m.userData.p; if (p.id === sel.id || grupoSel.includes(p.id)) m.material.color.set(css("--red")).multiplyScalar(k); }); }
   renderer.render(scene, cam); requestAnimationFrame(loop);
 })(0);
 
@@ -107,6 +107,7 @@ async function carregar(n) {
 }
 const pedidoAtual = () => (location.hash.match(/^#(\d+)/) || [])[1] || PEDIDOS[0];
 const pecaAtual = () => (location.hash.match(/^#\d+-p(\d+)$/) || [])[1] || null;
+const etiquetaAtual = () => (location.hash.match(/^#\d+-e(\d+)$/) || [])[1] || null;
 function irPeca(id) { const h = "#" + ped.pedido + "-p" + id; if (location.hash !== h) location.hash = h; else render(); }
 
 // ---------- tela ----------
@@ -121,11 +122,22 @@ function ficha(p) {
 async function render() {
   const n = pedidoAtual();
   try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou o QR da etiqueta."; return; }
-  const id = pecaAtual();
-  sel = null; movel = null;
+  let id = pecaAtual(); const cb = etiquetaAtual();
+  sel = null; movel = null; grupoSel = []; aviso = "";
+  if (cb) {
+    const alvo = (ped.etiquetas || {})[cb];
+    const todas = ped.moveis.flatMap(m => m.pecas);
+    if (alvo && todas.some(p => p.id === alvo)) id = alvo;
+    else if (alvo && todas.some(p => (p.anc || []).includes(alvo))) {
+      const f = todas.filter(p => (p.anc || []).includes(alvo)); id = f[0].id; grupoSel = f.map(p => p.id);
+      aviso = "Esta etiqueta é do conjunto \u201c" + ((ped.indice || {})[alvo] || "conjunto") + "\u201d: as " + f.length + " peças dele estão marcadas.";
+    } else aviso = alvo && (ped.indice || {})[alvo]
+      ? "Etiqueta de \u201c" + ped.indice[alvo] + "\u201d. É ferragem, acessório ou gaveta que já vem montada: não tem lugar no móvel."
+      : "Etiqueta do pedido " + ped.pedido + " sem peça com desenho.";
+  }
   if (id) for (const m of ped.moveis) { const p = m.pecas.find(q => q.id === id); if (p) { sel = p; movel = m; break; } }
   if (!movel) movel = ped.moveis.find(m => m.caixa) || ped.moveis[0];
-  const mont = !!sel;
+  const mont = !!sel || !!cb;
   document.body.classList.toggle("montador", mont);
   $("#dFicha").open = !mont; $("#dLista").open = !mont; $("#dFicha").hidden = !sel;
   montarCena(); zoom = 1;
@@ -140,8 +152,10 @@ async function render() {
   resize();
   const idx = movel.pecas.indexOf(sel) + 1;
   $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${movel.pecas.length}` : "");
-  $("#nome").textContent = sel ? sel.nome : "Leia o QR de uma etiqueta";
-  $("#onde").textContent = sel ? frasePosicao(sel) : "Ou toque numa etiqueta abaixo para simular a leitura.";
+  $("#nome").textContent = sel ? sel.nome : "Leia a etiqueta da peça";
+  $("#onde").textContent = aviso && !sel ? aviso : sel ? frasePosicao(sel) + (aviso ? " " + aviso : "") : "Ou toque numa etiqueta abaixo para simular a leitura.";
+  if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
+  $(".view").hidden = !!(cb && !sel);
   $("#ficha").innerHTML = sel ? ficha(sel) : "";
   $("#dLista").hidden = !!movel.solo;
   $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
@@ -184,5 +198,33 @@ function folha() {
 }
 $("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl"); if (l) { irPeca(l.dataset.id); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } });
 $("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) irPeca(e.target.dataset.id); });
+
+// ---------- ler a etiqueta que a fábrica já imprime (código de barras do Focco) ----------
+async function abrirEtiqueta(txt) {
+  const cb = String(txt || "").replace(/\D/g, "");
+  if (!cb) return false;
+  const n = cb.padStart(10, "0");
+  for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
+  $("#scanMsg").textContent = "Etiqueta " + n + " não está nos pedidos deste protótipo (" + PEDIDOS.join(", ") + ").";
+  return false;
+}
+let leitor = null;
+async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
+$("#bLer").onclick = async () => {
+  $("#scan").hidden = false; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
+  try {
+    const hints = new Map();
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE]);
+    leitor = new ZXing.BrowserMultiFormatReader(hints);
+    await leitor.decodeFromConstraints({ video: { facingMode: "environment" } }, $("#scanVideo"), async r => {
+      if (!r) return;
+      const txt = r.getText(); $("#scanMsg").textContent = "Lido: " + txt;
+      if (/agilesolution\.com\.br\/qr-montagem/.test(txt)) { await fecharLeitor(); location.href = txt; return; }
+      if (await abrirEtiqueta(txt)) { await fecharLeitor(); scrollTo({ top: 0 }); }
+    });
+  } catch (e) { $("#scanMsg").textContent = "Não consegui abrir a câmera (" + ((e && e.name) || "erro") + "). Digite o número da etiqueta abaixo."; }
+};
+$("#bFechar").onclick = fecharLeitor;
+$("#fDigitar").addEventListener("submit", async e => { e.preventDefault(); if (await abrirEtiqueta($("#iCodigo").value)) { await fecharLeitor(); scrollTo({ top: 0 }); } });
 
 render();
