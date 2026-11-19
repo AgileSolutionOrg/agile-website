@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agile Count | Agile Solution</title>
+<!-- Pagina de demonstracao do Agile Count. Fora do menu e do Google de proposito: so abre quem recebe o link. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Agile Count: contagem por foto que grava direto no ERP. Protótipo da Agile Solution.">
+<link rel="icon" href="../img/favicon.png">
+<!-- Mesma CSP do index.html. O script fica em app.js porque a CSP nao aceita script inline. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<link rel="stylesheet" href="../css/fontes.css">
+<style>
+/* Layout: faixa escura de abertura com o celular que funciona; abaixo, painel do gestor ao vivo, comparativo e plano em coluna de 1120px */
+:root{
+  --bg:#F3F6FB; --surface:#FFFFFF; --sunk:#E9EEF7; --fg:#18202E; --muted:#4A5A75; --line:#D3DCEA;
+  --azul:#1F4B8D; --carmim:#AF3346; --ok:#1E7A4C; --aviso:#A86400; --on-azul:#FFFFFF;
+  --hero:#08111F; --hero-fg:#EAF0F8; --hero-muted:#9DB0CC;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1322; --surface:#111C2F; --sunk:#17243B; --fg:#E6ECF5; --muted:#9CABC4; --line:#24334D;
+  --azul:#7FC4FF; --carmim:#E0566B; --ok:#4CC38A; --aviso:#F0A93B; --on-azul:#0B1322; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1322; --surface:#111C2F; --sunk:#17243B; --fg:#E6ECF5; --muted:#9CABC4; --line:#24334D;
+  --azul:#7FC4FF; --carmim:#E0566B; --ok:#4CC38A; --aviso:#F0A93B; --on-azul:#0B1322; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.6}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;line-height:1.15;margin:0}
+h2{font-size:clamp(1.35rem,3vw,1.75rem);font-weight:800}
+h3{font-size:1rem;font-weight:700}
+p{margin:0;max-width:66ch}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--carmim)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+button{font-family:inherit}
+:focus-visible{outline:3px solid #4FA3FF;outline-offset:2px}
+
+/* ===== abertura ===== */
+.hero{background:radial-gradient(900px 500px at 85% 10%,rgba(79,163,255,.18),transparent 60%),radial-gradient(700px 400px at 10% 100%,rgba(203,14,53,.16),transparent 60%),var(--hero);color:var(--hero-fg);padding-block:44px 56px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr;gap:32px}}
+.hero-txt{display:grid;gap:20px;min-width:0}
+.marca{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;letter-spacing:.03em;color:var(--hero-fg)}
+.pontos{display:flex;gap:4px}.pontos i{width:7px;height:7px;border-radius:50%;background:#CB0E35;display:block}
+.pontos i:nth-child(2){transform:translateY(-3px)}.pontos i:nth-child(3){transform:translateY(-5px)}
+.hero h1{font-size:clamp(2.1rem,5.4vw,3.6rem);font-weight:800;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:#7FC4FF}
+.hero .lead{font-size:1.08rem;color:var(--hero-muted);max-width:56ch}
+.nomebox{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.86rem;color:var(--hero-muted)}
+.nomebox b{color:var(--hero-fg);font-size:1rem}
+.chip{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:3px 11px;font-size:.78rem;color:var(--hero-fg)}
+.fatos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:6px}
+@media (max-width:520px){.fatos{grid-template-columns:1fr}}
+.fato{border-top:2px solid rgba(255,255,255,.18);padding-top:10px;display:grid;gap:2px}
+.fato b{font-size:1.5rem;font-weight:800}
+.fato span{font-size:.8rem;color:var(--hero-muted)}
+.fato.c{border-color:#CB0E35}
+.acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.b-demo{background:#CB0E35;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:700;font-size:.92rem;cursor:pointer}
+.b-demo:disabled{opacity:.6;cursor:default}
+.b-sec{background:transparent;color:var(--hero-fg);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:11px 16px;font-weight:600;font-size:.9rem;cursor:pointer}
+.nota{font-size:.78rem;color:var(--hero-muted)}
+
+/* ===== celular ===== */
+.phone{width:min(318px,100%);background:#02060D;border-radius:40px;padding:11px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 80px rgba(0,0,0,.55),0 0 120px rgba(79,163,255,.12);justify-self:center}
+.scr{border-radius:30px;background:#0F1A2D;color:#E9EEF7;overflow:hidden;display:flex;flex-direction:column;min-height:628px;font-size:12px;line-height:1.4;position:relative}
+.status{display:flex;justify-content:space-between;padding:10px 20px 2px;font-size:10.5px;font-weight:600;color:#C7D3E6}
+.top{display:flex;align-items:center;gap:8px;padding:8px 14px 10px}
+.top .t{font-weight:700;font-size:13.5px;flex:1}
+.voltar{background:none;border:0;color:#7FC4FF;font-size:16px;padding:0 4px;cursor:pointer}
+.ajuda{width:18px;height:18px;border-radius:50%;border:1.5px solid #7FC4FF;color:#7FC4FF;font-size:10.5px;display:grid;place-items:center;font-weight:800;flex:none}
+.corpo{padding:0 12px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tar{all:unset;box-sizing:border-box;cursor:pointer;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 11px;display:grid;gap:3px}
+.tar:hover{background:rgba(255,255,255,.09)}
+.tar:focus-visible{outline:2px solid #4FA3FF}
+.tar small,.lbl{color:#93A9CB;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700}
+.tar .l{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tar b{font-size:12.5px}
+.tar span.s{color:#B9C6DA;font-size:11px}
+.pill{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#1F4B8D;color:#E9EEF7;white-space:nowrap}
+.pill.c{background:#CB0E35}.pill.ok{background:#1E7A4C}.pill.cz{background:#3A4A63}
+.fotobox{position:relative;width:100%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#222;flex:none}
+.fotobox canvas{width:100%;height:100%;display:block;touch-action:none}
+.mira{position:absolute;inset:8% 6%;border:2px dashed rgba(255,255,255,.8);border-radius:10px;pointer-events:none}
+.balao{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(4,10,20,.78);border-radius:10px;padding:7px 9px;font-size:10.5px;pointer-events:none}
+.balao.topo{top:8px;bottom:auto}
+.scan{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#4FA3FF,transparent);box-shadow:0 0 18px #4FA3FF;top:0;pointer-events:none}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;background:#1F4B8D;color:#fff;font-weight:700;text-align:center;border-radius:12px;padding:12px;font-size:12.5px;display:block}
+.btn.c{background:#CB0E35}.btn.g{background:rgba(255,255,255,.08)}
+.btn[aria-disabled="true"]{opacity:.45;cursor:default}
+.btn:focus-visible{outline:2px solid #4FA3FF}
+.dupla{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.cont-l{display:flex;align-items:baseline;justify-content:space-between}
+.cont-l b{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.leg{display:flex;gap:12px;font-size:10px;color:#B9C6DA}
+.leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px;border:1.5px solid #fff}
+.rigor{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:10.5px;color:#B9C6DA}
+.rigor input{width:100%;accent-color:#4FA3FF}
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+.cmp div{background:rgba(255,255,255,.06);border-radius:10px;padding:9px 2px;display:grid}
+.cmp b{font-size:21px;font-variant-numeric:tabular-nums}
+.cmp small{font-size:9.5px;color:#93A9CB}
+.cmp .neg b{color:#FF8A9A}.cmp .zero b{color:#6EE0A6}
+.resumo{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;background:rgba(255,255,255,.055);border-radius:12px;padding:8px}
+.resumo img{width:62px;height:82px;object-fit:cover;border-radius:8px;display:block}
+.motivos{display:grid;gap:5px}
+.motivos label{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.055);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:11.5px}
+.motivos input{accent-color:#CB0E35}
+.feito{display:grid;justify-items:center;gap:10px;text-align:center;padding-top:26px}
+.check{width:74px;height:74px;border-radius:50%;background:#1E7A4C;display:grid;place-items:center;box-shadow:0 0 0 10px rgba(30,122,76,.18)}
+.check svg{width:38px;height:38px}
+.tempos{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
+.tempos div{background:rgba(255,255,255,.06);border-radius:10px;padding:9px 4px;display:grid}
+.tempos b{font-size:19px;font-variant-numeric:tabular-nums}
+.tempos small{font-size:9.5px;color:#93A9CB}
+.log{width:100%;text-align:left;background:#060C17;border-radius:10px;padding:8px 10px;font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:#9FE3BE;line-height:1.5}
+.arquivo{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* ===== seções ===== */
+section{padding-block:56px;border-top:1px solid var(--line)}
+section .wrap{display:grid;gap:22px}
+.cab{display:grid;gap:8px}
+
+/* painel do gestor */
+.painel{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid}
+.p-top{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--sunk)}
+.p-top b{font-size:.95rem}
+.p-top .q3{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--azul);color:var(--azul);font-size:10.5px;display:inline-grid;place-items:center;font-weight:800;margin-left:6px;vertical-align:1px}
+.ao-vivo{font-size:.75rem;font-weight:700;color:var(--ok);display:flex;align-items:center;gap:6px}
+.ao-vivo i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line)}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:16px 18px;display:grid;gap:2px;border-right:1px solid var(--line)}
+.kpi:last-child{border-right:0}
+.kpi span{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.kpi b{font-size:1.65rem;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi small{font-size:.78rem;color:var(--muted)}
+.kpi.alerta b{color:var(--carmim)}
+.tab-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:.86rem}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td .th{width:34px;height:44px;border-radius:5px;object-fit:cover;display:block;background:var(--sunk)}
+.d-neg{color:var(--carmim);font-weight:700}.d-ok{color:var(--ok);font-weight:700}
+tr.novo td{background:color-mix(in srgb,var(--azul) 12%,transparent);transition:background 2.5s}
+tr.novo.fade td{background:transparent}
+.ex{font-size:.78rem;color:var(--muted)}
+
+/* modos */
+.modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.modo{display:grid;gap:8px;align-content:start;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.modo .k{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--azul)}
+.modo p{font-size:.9rem;color:var(--muted)}
+.honesto{font-size:.86rem;color:var(--muted);border-left:3px solid var(--aviso);padding-left:12px;max-width:80ch}
+
+/* comparativo */
+.comp{border:1px solid var(--line);border-radius:12px;overflow-x:auto;background:var(--surface)}
+.comp table{min-width:640px}
+.comp th:nth-child(3),.comp td:nth-child(3){background:color-mix(in srgb,var(--azul) 8%,transparent)}
+.comp td:first-child{font-weight:600}
+.fonte{font-size:.78rem;color:var(--muted)}
+.fonte a{color:var(--azul)}
+
+/* casos e fases */
+.casos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.caso{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:4px;align-content:start}
+.caso .cl{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.caso p{font-size:.85rem;color:var(--muted)}
+.dif{font-size:.75rem;font-weight:700}
+.f-baixa{color:var(--ok)}.f-media{color:var(--aviso)}.f-alta{color:var(--carmim)}
+.linha{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+@media (max-width:760px){.linha{grid-template-columns:1fr}}
+.fase{padding:16px;display:grid;gap:6px;align-content:start;border-right:1px solid var(--line)}
+.fase:last-child{border-right:0}
+@media (max-width:760px){.fase{border-right:0;border-bottom:1px solid var(--line)}.fase:last-child{border-bottom:0}}
+.fase .q2{font-weight:800;color:var(--azul);font-size:.85rem}
+.fase .q2 small{color:var(--muted);font-weight:600;margin-left:6px}
+.fase p{font-size:.86rem;color:var(--muted)}
+.fase .saida{font-size:.8rem;font-weight:600}
+.fase .saida b{color:var(--carmim)}
+.aberto{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;padding:0;margin:0;list-style:none}
+.aberto li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.9rem;display:grid;gap:3px}
+.aberto li span{color:var(--muted);font-size:.85rem}
+footer{padding-block:28px 48px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="hero pad">
+  <div class="wrap hero-grid">
+    <div class="hero-txt">
+      <a class="marca" href="/" style="text-decoration:none"><span class="pontos"><i></i><i></i><i></i></span>Agile Solution · produto</a>
+      <h1>Fotografou, contou,<br><em>gravou no Focco.</em></h1>
+      <p class="lead">O operador fotografa a pilha, marca uma peça e a IA conta as outras. Ele confere com um toque e a contagem cai direto no Focco, com a foto como prova. A divergência com o estoque aparece antes de ele sair do almoxarifado.</p>
+      <div class="nomebox"><span>Nome</span><b>Agile Count</b><span class="chip">grava no Focco</span><span class="chip">conversa com o Agile ONE - Estoque</span></div>
+      <div class="acoes">
+        <button class="b-demo" id="demo" type="button">▶ Ver a contagem sozinha</button>
+        <button class="b-sec" id="reini" type="button">Começar de novo</button>
+        <a class="b-sec" href="/#contato" style="text-decoration:none">Falar com a Agile</a>
+      </div>
+      <p class="nota">O celular ao lado funciona. Escolha uma tarefa, arraste em volta de uma peça e confira. Pela tarefa avulsa, dá para contar uma foto sua.</p>
+      <div class="fatos">
+        <div class="fato c"><b class="num">US$ 120</b><span>por mês e por aparelho, o preço do CountThings (≈ R$ 650)</span></div>
+        <div class="fato"><b class="num" id="f-tempo">~5 min</b><span>para contar à mão os <span id="f-n">139</span> tubos da tarefa ao lado, duas vezes, para ter certeza (estimativa)</span></div>
+        <div class="fato"><b>1 toque</b><span>para corrigir uma peça que a IA errou. Quem confirma a contagem é sempre a pessoa.</span></div>
+      </div>
+    </div>
+
+    <div class="phone" aria-label="Protótipo do app no celular">
+      <div class="scr" id="scr"></div>
+    </div>
+  </div>
+</div>
+
+<section class="pad">
+  <div class="wrap">
+    <div class="cab">
+      <div class="eyebrow">O que o gestor vê</div>
+      <h2>A contagem chega no painel enquanto o operador ainda está na prateleira</h2>
+      <p class="muted">Conte uma tarefa no celular acima e ela entra no topo desta lista, com a foto marcada. As outras linhas são exemplos.</p>
+    </div>
+    <div class="painel">
+      <div class="p-top"><span><b>Contagens de hoje · Almoxarifado</b><span class="q3" title="Ajuda">?</span></span><span class="ao-vivo"><i></i>ao vivo</span></div>
+      <div class="kpis">
+        <div class="kpi"><span>Contagens</span><b id="k-n">5</b><small>hoje, 3 operadores</small></div>
+        <div class="kpi alerta"><span>Com divergência</span><b id="k-d">2</b><small id="k-ds">R$ 1.184 em diferença</small></div>
+        <div class="kpi"><span>Tempo médio</span><b id="k-t">38 s</b><small>da foto ao Focco</small></div>
+        <div class="kpi"><span>Acuracidade</span><b id="k-a">60%</b><small>contagens sem divergência</small></div>
+      </div>
+      <div class="tab-wrap"><table>
+        <thead><tr><th>Hora</th><th>Foto</th><th>Item</th><th>Local</th><th class="n">Focco</th><th class="n">Contado</th><th class="n">Dif.</th><th>Motivo</th><th>Quem</th></tr></thead>
+        <tbody id="linhas"></tbody>
+      </table></div>
+    </div>
+    <p class="ex">Itens, quantidades, valores e nomes são exemplos.</p>
+  </div>
+</section>
+
+<section class="pad">
+  <div class="wrap">
+    <div class="cab">
+      <div class="eyebrow">Por que dá certo agora</div>
+      <h2>A IA não precisa conhecer a peça antes</h2>
+      <p class="muted">Em 2024 saíram modelos abertos de contagem por exemplo, como o CountGD e o GeCo. Eles contam uma peça que nunca viram a partir de um ou dois exemplos marcados na foto. É isso que tira o custo de treinar um modelo para cada item, que é o que o CountThings cobra.</p>
+    </div>
+    <div class="modos">
+      <div class="modo"><span class="k">Modo 1 · entrada</span><h3>Por exemplo</h3><p>O operador arrasta em volta de uma peça e o modelo acha as parecidas. Serve para qualquer item do cadastro no primeiro dia.</p></div>
+      <div class="modo"><span class="k">Modo 2 · uso diário</span><h3>Modelo do cliente</h3><p>Cada contagem conferida vira foto de treino. Com algumas centenas, treinamos um modelo só para aquele tubo ou aquela chapa: conta sozinho, sem marcar nada.</p></div>
+      <div class="modo"><span class="k">Modo 3 · reserva</span><h3>Manual assistido</h3><p>Quando a IA não dá conta (peças muito sobrepostas, luz ruim), o operador toca em cada peça e o app soma. O registro com foto vale do mesmo jeito.</p></div>
+    </div>
+    <p class="honesto">A contagem do celular desta página roda no seu navegador com comparação de padrão, um método simples e rápido. O produto usa os modelos de IA no servidor, que lidam melhor com sobreposição, sombra e ângulo. Se o demo errar alguma peça, é exatamente o caso que o operador corrige com um toque.</p>
+  </div>
+</section>
+
+<section class="pad">
+  <div class="wrap">
+    <div class="cab">
+      <div class="eyebrow">Comparado ao CountThings</div>
+      <h2>Eles contam. Nós contamos e gravamos no ERP.</h2>
+    </div>
+    <div class="comp"><table>
+      <thead><tr><th></th><th>CountThings</th><th>Agile Count</th></tr></thead>
+      <tbody>
+        <tr><td>Peça nova</td><td>Precisa de modelo pronto ou de projeto de ajuste</td><td>Marca um exemplo e conta no mesmo dia</td></tr>
+        <tr><td>Depois de contar</td><td>Alguém digita o número no ERP</td><td>Grava no Focco pelo agente, sem digitar</td></tr>
+        <tr><td>Quantidade esperada</td><td>Não sabe</td><td>Vem do Focco e mostra a divergência na hora</td></tr>
+        <tr><td>Prova</td><td>Foto salva no aparelho</td><td>Foto marcada no Portal, ligada à contagem e ao usuário</td></tr>
+        <tr><td>Preço</td><td>US$ 120/mês por aparelho · US$ 80 por 100 contagens · vídeo US$ 600/mês</td><td>Grátis no início; depois por empresa, não por aparelho</td></tr>
+        <tr><td>Sem internet</td><td>Sim, conta no aparelho</td><td>Fase 3, se algum cliente pedir</td></tr>
+        <tr><td>Idioma e suporte</td><td>Revendedor no Brasil</td><td>A equipe que já atende o Focco do cliente</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fonte">Preços do CountThings conforme <a href="https://www.countthings.com/pt-br" target="_blank" rel="noopener">countthings.com</a> e <a href="https://countthings.com/guides/0044" target="_blank" rel="noopener">guia de preços</a>, consultados em 12/11/2026.</p>
+  </div>
+</section>
+
+<section class="pad">
+  <div class="wrap">
+    <div class="cab">
+      <div class="eyebrow">Onde usar primeiro</div>
+      <h2>Seis casos na indústria</h2>
+    </div>
+    <div class="casos">
+      <div class="caso"><span class="cl">Indústria metalmecânica</span><h3>Contagem cíclica</h3><p>Liga direto na análise de divergências de estoque do Agile ONE - Estoque.</p><span class="dif f-media">Dificuldade média: peças variadas</span></div>
+      <div class="caso"><span class="cl">Indústria moveleira</span><h3>Pilha de chapas</h3><p>Contar chapa pela lateral no recebimento e no saldo.</p><span class="dif f-baixa">Dificuldade baixa: bordas paralelas</span></div>
+      <div class="caso"><span class="cl">Metalurgia</span><h3>Tubos e barras</h3><p>Contados pela ponta, no inventário e na requisição.</p><span class="dif f-baixa">Dificuldade baixa: círculos nítidos</span></div>
+      <div class="caso"><span class="cl">Indústria e distribuição</span><h3>Carga paletizada</h3><p>Volumes no caminhão contra a carga, antes de a nota sair.</p><span class="dif f-media">Dificuldade média: ângulo da foto</span></div>
+      <div class="caso"><span class="cl">Vinícola</span><h3>Garrafas e caixas</h3><p>Conferência do palete na expedição.</p><span class="dif f-media">Dificuldade média: camadas escondidas</span></div>
+      <div class="caso"><span class="cl">Galvanoplastia</span><h3>Peças pequenas</h3><p>Apontamento da OP por foto da gancheira ou da caixa.</p><span class="dif f-alta">Dificuldade alta: amontoado e brilho</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad">
+  <div class="wrap">
+    <div class="cab">
+      <div class="eyebrow">Como chegamos lá</div>
+      <h2>Provar com fotos reais antes de construir</h2>
+      <p class="muted">Prazos estimados, a confirmar depois da Fase 0.</p>
+    </div>
+    <div class="linha">
+      <div class="fase"><span class="q2">Fase 0<small>~2 semanas</small></span><h3>Teste com fotos reais</h3><p>De 50 a 100 fotos de um cliente, contadas à mão, rodadas nos três modos.</p><span class="saida">Segue se acertar <b>95% ou mais</b> com a correção do operador.</span></div>
+      <div class="fase"><span class="q2">Fase 1<small>~4 semanas</small></span><h3>Contagem cíclica</h3><p>Estas telas, o serviço de contagem e a gravação no Focco, num cliente, de graça.</p><span class="saida">O número cai no ONE - Estoque.</span></div>
+      <div class="fase"><span class="q2">Fase 2<small>~4 semanas</small></span><h3>Recebimento e carga</h3><p>Conferência contra a NF e contra a carga. Primeiro modelo treinado de um cliente.</p><span class="saida">Mais clientes, mais casos.</span></div>
+      <div class="fase"><span class="q2">Fase 3<small>depois</small></span><h3>Sem internet e vídeo</h3><p>App instalado para almoxarifado sem sinal; contagem em vídeo na esteira ou na doca.</p><span class="saida">Só se pedirem.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="pad"><div class="wrap">Agile Solution · Agilidade &amp; soluções — desafiando o futuro · Protótipo de demonstração. Prazos e tempos são estimativas.</div></footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
