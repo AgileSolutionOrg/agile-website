@@ -157,6 +157,10 @@ async function render() {
   if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
   $(".view").hidden = !!(cb && !sel);
   $("#ficha").innerHTML = sel ? ficha(sel) : "";
+  // desenho técnico da peça (o mesmo .bmp da etiqueta de produção, convertido em PNG)
+  const temDes = !!(sel && sel.des && /^[A-Z_]+\d+[A-Z]$/.test(sel.des));
+  $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
+  if (temDes) { $("#desenhoImg").src = "desenhos/" + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
   $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
   document.title = sel ? `${sel.nome} | Onde vai esta peça` : "QR de Montagem | Agile Solution";
@@ -225,6 +229,8 @@ $("#bLer").onclick = async () => {
   } catch (e) { $("#scanMsg").textContent = "Não consegui abrir a câmera (" + ((e && e.name) || "erro") + "). Digite o número da etiqueta abaixo."; }
 };
 $("#bFechar").onclick = fecharLeitor;
+$("#desenhoImg").addEventListener("error", () => { $("#desenho").hidden = true; });
+$("#desenhoImg").addEventListener("click", () => $("#desenho").classList.toggle("grande"));
 $("#fDigitar").addEventListener("submit", async e => { e.preventDefault(); if (await abrirEtiqueta($("#iCodigo").value)) { await fecharLeitor(); scrollTo({ top: 0 }); } });
 
 render();

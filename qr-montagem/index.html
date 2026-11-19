@@ -79,6 +79,10 @@ body.montador .card{padding:14px 16px;gap:10px}
 body.montador .big{font-size:1.5rem}
 body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
 @media (min-width:761px){body.montador .stage{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}body.montador .view{height:72vh;margin-inline:0;border-radius:10px;border-top:1px solid var(--line)}}
+.desenho{margin:0;display:flex;flex-direction:column;gap:4px}
+.desenho img{width:100%;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:zoom-in}
+.desenho.grande img{position:fixed;inset:0;z-index:40;width:100vw;height:100vh;object-fit:contain;border-radius:0;padding:16px;cursor:zoom-out}
+.desenho figcaption{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
 .ler{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--red);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-size:1rem;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .ler:hover{filter:brightness(1.05)}
 body{padding-bottom:84px}
@@ -114,6 +118,10 @@ body{padding-bottom:84px}
       <div class="eyebrow" id="cnt">Peça</div>
       <div class="big" id="nome">Toque numa peça ou leia uma etiqueta</div>
       <div class="where" id="onde">Leia o QR de uma etiqueta abaixo com a câmera do celular.</div>
+      <figure class="desenho" id="desenho" hidden>
+        <img id="desenhoImg" alt="Desenho técnico da peça: medidas, bordas e furação">
+        <figcaption id="desenhoCap">Desenho da peça (o mesmo da etiqueta de produção)</figcaption>
+      </figure>
       <details class="dt" id="dFicha"><summary>Detalhes da peça</summary><dl id="ficha"></dl></details>
       <details class="dt" id="dLista" open><summary>Peças deste móvel</summary><div class="list" id="lista"></div></details>
     </aside>
