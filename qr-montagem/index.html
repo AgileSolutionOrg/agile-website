@@ -61,6 +61,20 @@ h2{font-size:1rem;margin:0}
 .lbl .qr{width:92px;height:92px;background:#fff;padding:3px}
 .lbl .qr img,.lbl .qr canvas{width:100%!important;height:100%!important;image-rendering:pixelated}
 .lbl .ft{grid-column:1/-1;display:flex;justify-content:space-between;border-top:1px solid #c8c8c0;padding-top:4px}
+.dt summary{cursor:pointer;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 0}
+.dt[open] summary{margin-bottom:6px}
+.rodape{display:none;margin:0;font-size:.72rem;color:var(--muted);text-align:center}
+/* Modo montador: abriu pelo QR. Só o móvel com a peça marcada e onde ela vai. */
+body.montador{padding-block:0 24px}
+body.montador .wrap{gap:12px}
+body.montador header,body.montador .etiquetas,body.montador .hint{display:none}
+body.montador .rodape{display:block}
+body.montador .stage{grid-template-columns:1fr;gap:12px}
+body.montador .view{aspect-ratio:auto;height:58svh;min-height:300px;border-radius:0 0 12px 12px;border-top:0;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)))}
+body.montador .card{padding:14px 16px;gap:10px}
+body.montador .big{font-size:1.5rem}
+body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
+@media (min-width:761px){body.montador .stage{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}body.montador .view{height:72vh;margin-inline:0;border-radius:10px;border-top:1px solid var(--line)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -87,15 +101,14 @@ h2{font-size:1rem;margin:0}
       <div class="eyebrow" id="cnt">Peça</div>
       <div class="big" id="nome">Toque numa peça ou leia uma etiqueta</div>
       <div class="where" id="onde">Leia o QR de uma etiqueta abaixo com a câmera do celular.</div>
-      <dl id="ficha"></dl>
-      <div>
-        <div class="eyebrow" style="margin-bottom:4px">Peças deste módulo</div>
-        <div class="list" id="lista"></div>
-      </div>
+      <details class="dt" id="dFicha"><summary>Detalhes da peça</summary><dl id="ficha"></dl></details>
+      <details class="dt" id="dLista" open><summary>Peças deste módulo</summary><div class="list" id="lista"></div></details>
     </aside>
   </section>
 
-  <section style="display:flex;flex-direction:column;gap:10px">
+  <p class="rodape">Esboço Agile Solution · posição aproximada pela descrição da peça · pedido 121709</p>
+
+  <section class="etiquetas" style="display:flex;flex-direction:column;gap:10px">
     <h2>Etiquetas das peças (como sairiam da fábrica)</h2>
     <p class="note">Abra esta página no computador e leia um QR com a câmera do celular. Não precisa de login nem de app. Ou toque numa etiqueta para simular a leitura.</p>
     <div class="sheet" id="sheet"></div>
