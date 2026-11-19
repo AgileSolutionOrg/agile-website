@@ -55,7 +55,11 @@ dt{color:var(--muted)} dd{margin:0;font-family:var(--mono);font-variant-numeric:
 .sw{width:10px;height:10px;border-radius:2px;flex:none;border:1px solid var(--line)}
 .n{font-family:var(--mono);color:var(--muted);width:2.2em;flex:none}
 h2{font-size:1rem;margin:0}
-.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.sheet{display:flex;flex-direction:column;gap:10px}
+.sheet h3{font-size:.95rem;margin:12px 0 0}.sheet h3 small{font-weight:400;color:var(--muted);font-size:.8rem}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{font-size:.82rem;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink);text-decoration:none;background:var(--panel)}.chip.on{border-color:var(--red);color:var(--red);font-weight:600}
+.row small{color:var(--muted)}
 .lbl{background:var(--label);color:#1a1a1a;border:1px dashed #9a9a92;border-radius:4px;padding:10px;display:grid;grid-template-columns:1fr 92px;gap:6px 10px;font-family:var(--mono);font-size:.7rem;line-height:1.35;cursor:pointer}
 .lbl .t{grid-column:1/-1;font-family:var(--sans);font-weight:700;font-size:.8rem;line-height:1.2;color:#1a1a1a}
 .lbl .qr{width:92px;height:92px;background:#fff;padding:3px}
@@ -67,7 +71,7 @@ h2{font-size:1rem;margin:0}
 /* Modo montador: abriu pelo QR. Só o móvel com a peça marcada e onde ela vai. */
 body.montador{padding-block:0 24px}
 body.montador .wrap{gap:12px}
-body.montador header,body.montador .etiquetas,body.montador .hint{display:none}
+body.montador header,body.montador .etiquetas,body.montador .hint{display:none!important}
 body.montador .rodape{display:block}
 body.montador .stage{grid-template-columns:1fr;gap:12px}
 body.montador .view{aspect-ratio:auto;height:58svh;min-height:300px;border-radius:0 0 12px 12px;border-top:0;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)))}
@@ -82,15 +86,15 @@ body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
 <div class="wrap">
   <header>
     <div>
-      <div class="eyebrow">Esboço · Pedido 121709 · WC Social · Gabinete Neve + Órion</div>
+      <div class="eyebrow">Protótipo · pedidos reais da Romanzza</div>
       <h1 id="ttl">Onde vai esta peça?</h1>
     </div>
-    <p class="note"><b>Esboço para testar a ideia.</b> Peças, medidas e códigos vêm do XML real do Promob (Builder) desse pedido. A <b>posição no móvel foi montada a partir da descrição</b> da peça, porque o XML não traz coordenadas. Na versão de verdade ela viria do Promob.</p>
+    <p class="note"><b>Gerado sozinho do XML do pedido</b>, o mesmo arquivo que já chega à fábrica. A posição de cada peça no móvel sai de regras por tipo de peça da biblioteca Romanzza (lateral, base, travessa, prateleira, rodapé, fundo, porta). Altura de prateleira e ordem das portas são aproximadas. Painéis do ambiente aparecem sozinhos, porque o lugar deles está na planta da loja.</p>
   </header>
 
   <section class="stage">
     <div class="view">
-      <canvas id="cv" aria-label="Modelo 3D do gabinete; arraste para girar"></canvas>
+      <canvas id="cv" aria-label="Modelo 3D do móvel; arraste para girar"></canvas>
       <div class="tools">
         <button id="bPortas" type="button">Esconder portas</button>
         <button id="bReset" type="button">Centralizar</button>
@@ -102,15 +106,17 @@ body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
       <div class="big" id="nome">Toque numa peça ou leia uma etiqueta</div>
       <div class="where" id="onde">Leia o QR de uma etiqueta abaixo com a câmera do celular.</div>
       <details class="dt" id="dFicha"><summary>Detalhes da peça</summary><dl id="ficha"></dl></details>
-      <details class="dt" id="dLista" open><summary>Peças deste módulo</summary><div class="list" id="lista"></div></details>
+      <details class="dt" id="dLista" open><summary>Peças deste móvel</summary><div class="list" id="lista"></div></details>
     </aside>
   </section>
 
-  <p class="rodape">Esboço Agile Solution · posição aproximada pela descrição da peça · pedido 121709</p>
+  <p class="rodape">Protótipo Agile Solution · posição montada por regra a partir do XML do pedido</p>
 
   <section class="etiquetas" style="display:flex;flex-direction:column;gap:10px">
+    <div class="chips" id="pedidos"></div>
     <h2>Etiquetas das peças (como sairiam da fábrica)</h2>
-    <p class="note">Abra esta página no computador e leia um QR com a câmera do celular. Não precisa de login nem de app. Ou toque numa etiqueta para simular a leitura.</p>
+    <p class="note" id="resumo"></p>
+    <p class="note">Abra no computador e leia um QR com a câmera do celular, sem login e sem app. Ou toque numa etiqueta para simular a leitura.</p>
     <div class="sheet" id="sheet"></div>
   </section>
 </div>
