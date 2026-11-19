@@ -62,7 +62,7 @@ function paint(){
     const frente = p ? /Porta/.test(p.nome) : true;   // portas e puxadores
     m.material.color.set(isSel ? css("--red") : baseColor(m.userData.acab));
     let op = 1;
-    if (sel && !isSel) op = .55;
+    if (sel && !isSel) op = document.body.classList.contains("montador") ? (m.userData.acab === "mdf" ? .45 : .16) : .55;
     if (frente && !isSel && (portasOcultas || (sel && !/Porta/.test(sel.nome)))) op = .12;
     m.material.opacity = op; m.material.depthWrite = op > .5; m.userData.edge.material.opacity = op < .5 ? .15 : .55;
   });
@@ -70,8 +70,8 @@ function paint(){
 
 // órbita simples (arrastar, pinça, roda)
 let yaw = -0.55, pitch = 0.32, dist = 2300;
-function placeCam(){ cam.position.set(Math.sin(yaw)*Math.cos(pitch)*dist, Math.sin(pitch)*dist, Math.cos(yaw)*Math.cos(pitch)*dist); cam.lookAt(0,0,0); }
-function resize(){ const r = cv.getBoundingClientRect(); if (!r.width) return; renderer.setSize(r.width, r.height, false); cam.aspect = r.width/Math.max(r.height,1); cam.updateProjectionMatrix(); }
+function placeCam(){ const d = dist * Math.max(1, 0.95 / (cam.aspect || 1)); cam.position.set(Math.sin(yaw)*Math.cos(pitch)*d, Math.sin(pitch)*d, Math.cos(yaw)*Math.cos(pitch)*d); cam.lookAt(0,0,0); }
+function resize(){ const r = cv.getBoundingClientRect(); if (!r.width) return; renderer.setSize(r.width, r.height, false); cam.aspect = r.width/Math.max(r.height,1); cam.updateProjectionMatrix(); placeCam(); }
 new ResizeObserver(resize).observe(cv);
 const pts = new Map();
 cv.addEventListener("pointerdown", e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x:e.clientX, y:e.clientY, x0:e.clientX, y0:e.clientY}); });
@@ -112,9 +112,15 @@ function go(id){ if (location.hash !== "#p"+id) location.hash = "p"+id; else sho
 function show(){
   const id = (location.hash.match(/^#p(\d+)$/) || [])[1];
   sel = PECAS.find(p => p.id === id) || null;
+  const montador = !!sel;
+  document.body.classList.toggle("montador", montador);
+  $("#dFicha").open = !montador;
+  $("#dLista").open = !montador;
+  dist = montador ? 1550 : 2300;
+  requestAnimationFrame(resize);
   if (sel){
     const i = PECAS.indexOf(sel) + 1;
-    $("#cnt").textContent = `Peça ${i} de ${PECAS.length} · etiqueta lida`;
+    $("#cnt").textContent = `Pedido 121709 · WC Social · peça ${i} de ${PECAS.length}`;
     $("#nome").textContent = sel.nome;
     $("#ttl").textContent = sel.nome;
     $("#onde").textContent = sel.onde;
@@ -125,12 +131,15 @@ function show(){
     else if (/direita|Vista/i.test(sel.nome)) { yaw = 0.8; pitch = 0.35; }
     else { yaw = -0.45; pitch = 0.55; }
     placeCam();
+    document.title = sel.nome + " | Onde vai esta peça";
   } else {
     $("#cnt").textContent = "Gabinete WC Social · 10 peças";
     $("#nome").textContent = "Toque numa peça ou leia uma etiqueta";
     $("#ttl").textContent = "Onde vai esta peça?";
     $("#onde").textContent = "Leia o QR de uma etiqueta abaixo com a câmera do celular.";
     $("#ficha").innerHTML = "";
+    document.title = "QR de Montagem | Agile Solution";
+    placeCam();
   }
   $("#lista").innerHTML = PECAS.map((p,i) => `<div class="row${sel===p?" on":""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i+1).padStart(2,"0")}</span><span class="sw" style="background:${sel===p?"var(--red)":p.acab==="orion"?"var(--orion)":"var(--mdf)"}"></span>${p.nome}</div>`).join("");
   paint();
