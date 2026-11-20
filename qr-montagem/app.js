@@ -248,6 +248,10 @@ $("#bInstalar").onclick = async () => { if (!pedidoInstalar) return; pedidoInsta
 if (!instalado && /iPhone|iPad|iPod/.test(navigator.userAgent)) $("#dicaInstalar").textContent = "Para deixar o ícone no iPhone: toque em Compartilhar e depois em “Adicionar à Tela de Início”.";
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { /* sem cache offline */ });
 
+// QR do site no computador: o celular abre já com a câmera
+const qrL = document.getElementById("qrLanding");
+if (qrL && matchMedia("(min-width: 900px)").matches) { try { new QRCode(qrL, { text: qrL.dataset.url, width: 256, height: 256, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { /* sem QR */ } }
+
 render();
 // aberto pelo ícone instalado ou pelo QR do cartão (?ler): já abre a câmera
 if (new URLSearchParams(location.search).has("ler") && !location.hash) abrirLeitor();

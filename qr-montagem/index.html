@@ -122,6 +122,88 @@ body.entrada .inicio{display:flex;flex-direction:column;align-items:center;justi
 .instalar button{background:transparent;color:#fff;border:1px solid #777;border-radius:999px;padding:10px 18px;font-size:.9rem}
 .assina{font-size:.72rem;color:#8a8a8a;letter-spacing:.04em;margin:0}
 .scan .logo{height:20px;width:auto;opacity:.9}
+.feito{display:inline-flex;align-items:center;gap:8px}
+@media (min-width:761px){.marca,body.montador .marca{margin:-16px calc(50% - 50vw) 0;padding:14px max(32px,calc((100vw - 1100px)/2))}body.montador .marca{margin-top:0;margin-bottom:0}.marca img{height:26px}}
+.marca .feito img{height:24px;width:auto}
+.inicio .feito img{height:34px;width:auto}
+/* ---------- Site no computador ---------- */
+.landing{display:none}
+@media (min-width:900px){
+  body.entrada{padding:0}
+  body.entrada .inicio{display:none!important}
+  body.entrada .landing{display:block}
+}
+.landing{--l-pad:max(32px,calc((100vw - 1180px)/2));font-size:17px;color:#fff;background:#000}
+.l-wrap{padding-inline:var(--l-pad)}
+.l-nav{position:sticky;top:0;z-index:15;background:rgba(0,0,0,.82);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.l-nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+.l-marca{display:flex;align-items:center;gap:14px;color:#fff;text-decoration:none}
+.l-marca img{height:26px;width:auto}
+.l-marca span{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:#bdbdbd;border-left:1px solid #444;padding-left:14px}
+.l-links{display:flex;align-items:center;gap:30px}
+.l-links a:not(.l-btn){color:#d6d6d6;text-decoration:none;font-size:.95rem;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .3s,color .2s;padding:12px 0}
+.l-links a:not(.l-btn):hover{color:#fff;background-size:100% 1px}
+.l-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:999px;font-weight:700;font-size:.98rem;text-decoration:none;transition:transform .18s,background .2s,box-shadow .2s}
+.l-btn-claro{background:#fff;color:#000}
+.l-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,255,255,.14)}
+.l-btn:active{transform:translateY(0) scale(.98)}
+.l-btn:focus-visible,.l-links a:focus-visible,.l-marca:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.l-hero{min-height:calc(100svh - 72px);display:flex;align-items:center;background:radial-gradient(900px 600px at 78% 40%,rgba(255,255,255,.09),transparent 70%),#000;overflow:hidden}
+.l-hero-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:64px;align-items:center;width:100%;padding-block:48px}
+.l-olho{font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;color:#a8a8a8;margin:0 0 22px}
+.l-hero h1{font-size:clamp(2.8rem,5.2vw,4.6rem);font-weight:400;line-height:1.04;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.l-lead{font-size:1.15rem;line-height:1.55;color:#cfcfcf;max-width:34em;margin:26px 0 0}
+.l-acoes{display:flex;align-items:center;gap:32px;margin-top:40px;flex-wrap:wrap}
+.l-qr{display:flex;align-items:center;gap:16px}
+.l-qr-img{width:96px;height:96px;background:#fff;padding:6px;border-radius:10px;flex:none}
+.l-qr-img img,.l-qr-img canvas{width:100%!important;height:100%!important;display:block}
+.l-qr p{margin:0;font-size:.9rem;color:#bdbdbd;max-width:12em;line-height:1.4}
+.l-qr b{display:block;color:#fff}
+.l-fone{justify-self:center;width:min(340px,100%);aspect-ratio:390/844;border-radius:52px;background:#111;padding:12px;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 40px 100px rgba(0,0,0,.7),0 0 120px rgba(255,255,255,.06)}
+.l-fone-tela{width:100%;height:100%;border-radius:42px;overflow:hidden;background:#fff}
+.l-fone-tela img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.l-entra{animation:l-entra .9s cubic-bezier(.2,.7,.2,1) both}
+.l-entra-2{animation-delay:.18s}
+@keyframes l-entra{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.l-como{background:#f4f4f3;color:#111;min-height:100svh;display:flex;align-items:center;padding-block:96px}
+.l-como .l-wrap{width:100%}
+.l-como h2,.l-ro h2{font-size:clamp(2rem,3.4vw,3rem);font-weight:400;line-height:1.1;letter-spacing:-.015em;margin:0 0 48px;max-width:18em;text-wrap:balance}
+.l-passos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.l-card{background:#fff;border:1px solid #e2e2df;border-radius:22px;padding:18px 18px 26px;transition:transform .2s,box-shadow .2s}
+.l-card:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(0,0,0,.08)}
+.l-card h3{font-size:1.3rem;margin:4px 0 8px;font-weight:700}
+.l-card p{margin:0;color:#555;line-height:1.5}
+.l-card .l-n{font-size:.8rem;letter-spacing:.2em;color:#999;margin:18px 0 0}
+.l-vis{height:230px;border-radius:14px;overflow:hidden;background:#ededeb;display:flex;align-items:center;justify-content:center}
+.l-vis img{transition:transform .5s}
+.l-card:hover .l-vis img{transform:scale(1.03)}
+.l-vis-3d img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.l-vis-des{background:#fff;border:1px solid #eee}
+.l-vis-des img{max-width:92%;max-height:92%;object-fit:contain}
+.l-vis-etq{background:#2b2b2b}
+.etq{width:72%;background:#F28C28;border-radius:8px;padding:14px 16px;font:700 12px/1.3 var(--mono);color:#2a1600;box-shadow:0 10px 24px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px}
+.etq i{display:block;height:58px;background:repeating-linear-gradient(90deg,#1a1a1a 0 2px,transparent 2px 4px,#1a1a1a 4px 7px,transparent 7px 9px,#1a1a1a 9px 10px,transparent 10px 13px)}
+.etq b{text-align:center;letter-spacing:3px}
+.l-fatos{list-style:none;margin:48px 0 0;padding:28px 0 0;border-top:1px solid #ddd;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;color:#555}
+.l-fatos b{display:block;font-size:2.4rem;font-weight:400;color:#111;letter-spacing:-.02em}
+.l-ro{min-height:100svh;display:flex;align-items:center;background:#000;padding-block:96px}
+.l-ro-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:72px;align-items:center;width:100%}
+.l-ro h2{margin-bottom:0}
+.l-ro .l-btn{margin-top:36px}
+.l-wa{background:#0E1A12;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06)}
+.l-wa-cab{display:flex;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.l-wa-av{width:46px;height:46px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:700}
+.l-wa-cab b{display:block}.l-wa-cab small{color:#8FB39A}
+.l-wa p{margin:0;max-width:82%;padding:12px 16px;border-radius:18px;line-height:1.45;font-size:1rem}
+.l-wa .m{align-self:flex-end;background:#1F5C3A;color:#E9F8EE;border-bottom-right-radius:6px}
+.l-wa .r{align-self:flex-start;background:#22313F;color:#EEF3FA;border-bottom-left-radius:6px}
+.l-rodape{background:#000;border-top:1px solid #1d1d1d;padding-block:48px}
+.l-rodape-in{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.l-rmz{height:28px;width:auto}
+.l-feito{display:flex;align-items:center;gap:12px;margin:0;color:#a8a8a8;font-size:.9rem}
+.l-feito img{height:54px;width:auto}
+.l-slogan{margin:0;color:#777;font-size:.82rem}
+@media (prefers-reduced-motion:reduce){.l-entra{animation:none}}
 .ler:hover{filter:brightness(1.05)}
 body{padding-bottom:84px}
 .scan{position:fixed;inset:0;z-index:30;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -147,10 +229,85 @@ body{padding-bottom:84px}
     <li><b>3</b><span>Aponte para o código de barras da <strong>etiqueta laranja</strong> da peça.</span></li>
   </ol>
   <p class="instalar" id="instalar"><button id="bInstalar" type="button" hidden>Colocar o ícone no celular</button><span id="dicaInstalar"></span></p>
-  <p class="assina">Tecnologia Agile Solution</p>
+  <p class="assina feito">Feito por <img src="marca/agile-logo-branco.png" alt="Agile Solution" width="520" height="381"></p>
 </section>
+
+<!-- Computador: site completo. Celular: a tela de entrada acima, com cara de app. -->
+<div class="landing" id="landing">
+  <nav class="l-nav" aria-label="Principal">
+    <div class="l-wrap l-nav-in">
+      <a href="./" class="l-marca" aria-label="Romanzza Montagem, início"><img src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77"><span>Montagem</span></a>
+      <div class="l-links"><a href="#como">Como funciona</a><a href="#ro">Etiqueta rasgada</a><a class="l-btn l-btn-claro" href="#120949">Abrir a demonstração</a></div>
+    </div>
+  </nav>
+  <main>
+    <section class="l-hero" aria-labelledby="hTitulo">
+      <div class="l-wrap l-hero-in">
+        <div class="l-hero-txt l-entra">
+          <p class="l-olho">Romanzza Montagem</p>
+          <h1 id="hTitulo">Leu a etiqueta,<br>viu onde a peça vai.</h1>
+          <p class="l-lead">O montador aponta o celular para a etiqueta laranja que já sai da fábrica e vê a peça em vermelho no móvel, com o desenho de produção. Sem app para baixar e sem mudar nada na produção.</p>
+          <div class="l-acoes">
+            <a class="l-btn l-btn-claro" href="#120949">Abrir a demonstração</a>
+            <div class="l-qr"><div id="qrLanding" class="l-qr-img" data-url="https://agilesolution.com.br/qr-montagem/?ler" role="img" aria-label="QR para abrir no celular"></div><p><b>No celular</b>aponte a câmera aqui e leia uma etiqueta.</p></div>
+          </div>
+        </div>
+        <div class="l-fone l-entra l-entra-2" aria-hidden="true"><div class="l-fone-tela"><img src="marca/tela-montador.png" alt="" width="780" height="1688"></div></div>
+      </div>
+    </section>
+
+    <section class="l-como" id="como" aria-labelledby="hComo">
+      <div class="l-wrap">
+        <h2 id="hComo">Três passos na obra, com a etiqueta de sempre.</h2>
+        <div class="l-passos">
+          <article class="l-card">
+            <div class="l-vis l-vis-etq" aria-hidden="true"><div class="etq"><span>ROMANZZA · PED 120949</span><i></i><b>0070593729</b></div></div>
+            <p class="l-n">1</p><h3>Lê a etiqueta laranja</h3><p>A mesma que o Agile Check já lê na fábrica. O código de barras diz qual é a peça.</p>
+          </article>
+          <article class="l-card">
+            <div class="l-vis l-vis-3d" aria-hidden="true"><img src="marca/tela-3d.png" alt="" width="780" height="980"></div>
+            <p class="l-n">2</p><h3>Vê a peça no móvel</h3><p>Em vermelho, no lugar dela, com a frase de onde vai: lado, ranhura, furação.</p>
+          </article>
+          <article class="l-card">
+            <div class="l-vis l-vis-des" aria-hidden="true"><img id="desLanding" src="desenhos/STA00097537A.png" alt="" loading="lazy"></div>
+            <p class="l-n">3</p><h3>Confere o desenho</h3><p>Medidas, fita de borda e furação, o mesmo desenho da etiqueta de produção.</p>
+          </article>
+        </div>
+        <ul class="l-fatos">
+          <li><b>34.500</b> chapas por mês</li>
+          <li><b>0</b> mudança na fábrica</li>
+          <li><b>1</b> celular, sem instalar nada</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="l-ro" id="ro" aria-labelledby="hRo">
+      <div class="l-wrap l-ro-in">
+        <div>
+          <h2 id="hRo">Etiqueta rasgada? A Rô resolve no WhatsApp.</h2>
+          <p class="l-lead">O montador diz o pedido e a medida. A Rô acha a peça e devolve o 3D e o desenho, no mesmo número que a loja já usa.</p>
+          <a class="l-btn l-btn-claro" href="#120949">Ver o pedido de exemplo</a>
+        </div>
+        <div class="l-wa" aria-label="Exemplo de conversa com a Rô">
+          <div class="l-wa-cab"><span class="l-wa-av">Rô</span><div><b>Rô · Romanzza</b><small>online</small></div></div>
+          <p class="m">Rô, a etiqueta dessa peça rasgou. Pedido 120949.</p>
+          <p class="r">Sem problema! Me passa a medida da peça.</p>
+          <p class="m">2513 por 540.</p>
+          <p class="r">É a <b>lateral esquerda do móvel 4</b>. Vai do lado esquerdo, ranhura para dentro. Te mandei o 3D e o desenho.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="l-rodape">
+    <div class="l-wrap l-rodape-in">
+      <img class="l-rmz" src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77">
+      <p class="l-feito">Feito por <img src="marca/agile-logo-branco.png" alt="Agile Solution" width="520" height="381"></p>
+      <p class="l-slogan">Agile Solution · Agilidade &amp; soluções, desafiando o futuro</p>
+    </div>
+  </footer>
+</div>
 <div class="wrap">
-  <div class="marca"><a href="./" aria-label="Romanzza Montagem, início"><img src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77"><span>Montagem</span></a><small>Agile Solution</small></div>
+  <div class="marca"><a href="./" aria-label="Romanzza Montagem, início"><img src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77"><span>Montagem</span></a><small class="feito">Feito por <img src="marca/agile-logo-branco.png" alt="Agile Solution" width="520" height="381"></small></div>
   <header>
     <div>
       <div class="eyebrow">Protótipo · pedidos reais da Romanzza</div>
