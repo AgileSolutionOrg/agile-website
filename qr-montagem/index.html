@@ -158,11 +158,10 @@ body.entrada .inicio{display:flex;flex-direction:column;align-items:center;justi
 .l-hero h1{font-size:clamp(2.8rem,5.2vw,4.6rem);font-weight:400;line-height:1.04;letter-spacing:-.02em;margin:0;text-wrap:balance}
 .l-lead{font-size:1.15rem;line-height:1.55;color:#cfcfcf;max-width:34em;margin:26px 0 0}
 .l-acoes{display:flex;align-items:center;gap:32px;margin-top:40px;flex-wrap:wrap}
-.l-qr{display:flex;align-items:center;gap:16px}
-.l-qr-img{width:96px;height:96px;background:#fff;padding:6px;border-radius:10px;flex:none}
-.l-qr-img img,.l-qr-img canvas{width:100%!important;height:100%!important;display:block}
-.l-qr p{margin:0;font-size:.9rem;color:#bdbdbd;max-width:12em;line-height:1.4}
-.l-qr b{display:block;color:#fff}
+.l-cel{display:flex;flex-direction:column;gap:2px;color:#bdbdbd;font-size:.92rem;text-decoration:none;border-left:1px solid #444;padding-left:24px}
+.l-cel b{color:#fff}
+.l-cel span{color:#fff;letter-spacing:.01em;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .3s}
+.l-cel:hover span{background-size:100% 1px}
 .l-fone{justify-self:center;width:min(340px,100%);aspect-ratio:390/844;border-radius:52px;background:#111;padding:12px;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 40px 100px rgba(0,0,0,.7),0 0 120px rgba(255,255,255,.06)}
 .l-fone-tela{width:100%;height:100%;border-radius:42px;overflow:hidden;background:#fff}
 .l-fone-tela img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
@@ -253,7 +252,7 @@ body{padding-bottom:84px}
           <p class="l-lead">O montador aponta o celular para a etiqueta laranja que já sai da fábrica e vê a peça em vermelho no móvel, com o desenho de produção. Sem app para baixar e sem mudar nada na produção.</p>
           <div class="l-acoes">
             <a class="l-btn l-btn-claro" href="#120949">Abrir a demonstração</a>
-            <div class="l-qr"><div id="qrLanding" class="l-qr-img" data-url="https://agilesolution.com.br/qr-montagem/?ler" role="img" aria-label="QR para abrir no celular"></div><p><b>No celular</b>aponte a câmera aqui e leia uma etiqueta.</p></div>
+            <a class="l-cel" href="./?ler"><b>No celular</b><span>agilesolution.com.br/qr-montagem</span></a>
           </div>
         </div>
         <div class="l-fone l-entra l-entra-2" aria-hidden="true"><div class="l-fone-tela"><img src="marca/tela-montador.png" alt="" width="780" height="1688"></div></div>
@@ -366,7 +365,6 @@ body{padding-bottom:84px}
 </div>
 
 <script src="vendor/three.min.js"></script>
-<script src="vendor/qrcode.min.js"></script>
 <script src="vendor/zxing.min.js"></script>
 <script src="app.js"></script>
 </body>

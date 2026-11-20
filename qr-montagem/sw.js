@@ -1,9 +1,9 @@
 // Romanzza Montagem: cache para obra com sinal fraco.
 // Rede primeiro (sempre a versão nova quando há sinal); sem sinal, usa o que já foi aberto antes.
 // Escopo: só /qr-montagem/ (o resto do site não passa por aqui).
-const CACHE = "montagem-v1";
+const CACHE = "montagem-v2";
 const BASE = ["./", "index.html", "app.js", "manifest.webmanifest",
-  "vendor/three.min.js", "vendor/qrcode.min.js", "vendor/zxing.min.js",
+  "vendor/three.min.js", "vendor/zxing.min.js",
   "marca/romanzza-logo-branco.png", "marca/quattrocento-sans-400.woff2", "marca/quattrocento-sans-700.woff2",
   "marca/icone-192.png", "marca/favicon-32.png"];
 
