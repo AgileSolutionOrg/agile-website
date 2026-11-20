@@ -1,6 +1,6 @@
 "use strict";
 // Romanzza Montagem (antes "QR de Montagem") — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
-// Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pelo QR).
+// Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pela etiqueta).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
 const PEDIDOS = ["120949", "121570", "121694", "121709"];
 
@@ -125,7 +125,7 @@ async function render() {
   document.body.classList.toggle("entrada", entrada);
   if (entrada) { document.body.classList.remove("montador"); document.title = "Romanzza Montagem"; return; }
   const n = pedidoAtual();
-  try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou o QR da etiqueta."; return; }
+  try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
   let id = pecaAtual(); const cb = etiquetaAtual();
   sel = null; movel = null; grupoSel = []; aviso = "";
   if (cb) {
@@ -188,25 +188,37 @@ function folha() {
   $("#resumo").textContent = `${ped.total} peças · ${ped.em3d} montadas no móvel (${pc(ped.em3d)}%) · ${ped.soltas} peças do ambiente (${pc(ped.soltas)}%) · ${ped.moveis.filter(m => m.caixa).length} móveis`;
   if (folhaDe === ped.pedido) return; folhaDe = ped.pedido;
   const caixas = ped.moveis.filter(m => m.caixa), soltos = ped.moveis.filter(m => !m.caixa);
-  const etiqueta = (p, m) => `
-    <div class="lbl" tabindex="0" role="button" data-id="${p.id}" aria-label="Etiqueta ${esc(p.nome)}">
+  // etiqueta laranja como a fábrica já imprime: código de barras com o número da etiqueta (sem QR)
+  const codigos = {};
+  for (const [cb, alvo] of Object.entries(ped.etiquetas || {})) (codigos[alvo] = codigos[alvo] || []).push(cb);
+  const codigoDe = p => (codigos[p.id] || []).concat(...(p.anc || []).map(a => codigos[a] || []))[0] || null;
+  const etiqueta = (p, m) => {
+    const cb = codigoDe(p);
+    return `
+    <div class="lbl" tabindex="0" role="button" data-id="${p.id}"${cb ? ` data-cb="${cb}"` : ""} aria-label="Etiqueta ${esc(p.nome)}${cb ? " " + cb : ""}">
+      <div class="lbl-top"><span>ROMANZZA</span><span>PED ${ped.pedido}</span></div>
       <div class="t">${esc(p.desc)}</div>
-      <div>PED ${ped.pedido}<br>${esc(m.nome)}<br>${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
-      <div class="qr" data-qr="${BASE_URL}#${ped.pedido}-p${p.id}"></div>
-      <div class="ft"><span>ROMANZZA</span><span>P${p.id}</span></div>
+      <div class="lbl-info">${esc(m.nome)} · ${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
+      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só no pedido 120949</div>`}
     </div>`;
+  };
   $("#sheet").innerHTML =
     caixas.map(m => `<h3>${esc(m.nome)} <small>${Math.round(m.dims.W)} × ${Math.round(m.dims.H)} × ${Math.round(m.dims.D)} mm · ${m.pecas.length} peças</small></h3><div class="grade">${m.pecas.map(p => etiqueta(p, m)).join("")}</div>`).join("") +
     (soltos.length ? `<h3>Peças do ambiente <small>painéis, ripas e vistas · ${soltos.length} peças</small></h3><div class="grade">${soltos.map(m => etiqueta(m.pecas[0], m)).join("")}</div>` : "");
-  // QR gerado quando a etiqueta chega perto da tela (pedido grande tem centenas)
-  const io = new IntersectionObserver(es => es.forEach(en => {
-    if (!en.isIntersecting) return; const el = en.target; io.unobserve(el);
-    try { new QRCode(el, { text: el.dataset.qr, width: 172, height: 172, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { /* sem QR */ }
-  }), { rootMargin: "400px" });
-  document.querySelectorAll("#sheet .qr[data-qr]").forEach(a => io.observe(a));
 }
-$("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl"); if (l) { irPeca(l.dataset.id); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); } });
-$("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.dataset.id) irPeca(e.target.dataset.id); });
+// Code 128 (conjunto C, só dígitos): desenha o código de barras da etiqueta em SVG
+const C128 = "212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
+function barras(dig) {
+  const d = dig.length % 2 ? "0" + dig : dig, v = [105];
+  for (let k = 0; k < d.length; k += 2) v.push(+d.slice(k, k + 2));
+  v.push(v.reduce((a, x, k) => a + x * (k || 1), 0) % 103, 106);
+  let x = 10, r = "";
+  for (const n of v) [...C128[n]].forEach((w, k) => { if (k % 2 === 0) r += `<rect x="${x}" width="${w}" height="40"/>`; x += +w; });
+  return `<svg viewBox="0 0 ${x + 10} 40" preserveAspectRatio="none" aria-hidden="true">${r}</svg>`;
+}
+const abrirLbl = l => { if (l.dataset.cb) location.hash = ped.pedido + "-e" + l.dataset.cb; else irPeca(l.dataset.id); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); };
+$("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl"); if (l) abrirLbl(l); });
+$("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("lbl")) abrirLbl(e.target); });
 
 // ---------- ler a etiqueta que a fábrica já imprime (código de barras do Focco) ----------
 async function abrirEtiqueta(txt) {
