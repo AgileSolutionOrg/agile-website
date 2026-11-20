@@ -3,27 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>QR de Montagem | Agile Solution</title>
-<!-- Esboço de demonstração (Romanzza, 19/11/2026). Fora do menu e do Google de propósito: só abre quem recebe o link ou lê o QR. -->
+<title>Romanzza Montagem</title>
+<!-- Protótipo (Romanzza, 19-20/11/2026). Fora do menu e do Google de propósito: só abre quem recebe o link ou lê o QR. -->
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Esboço: QR na etiqueta de cada peça abre o 3D do móvel com a peça destacada.">
-<link rel="icon" href="../img/favicon.png">
+<meta name="description" content="Romanzza Montagem: leia a etiqueta laranja da peça e veja onde ela vai no móvel.">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="marca/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="marca/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Montagem">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
-<link rel="stylesheet" href="../css/fontes.css">
 <style>
+/* Marca Romanzza (romanzza.com.br): preto e branco, logotipo serifado, Quattrocento Sans (SIL OFL, servida daqui). */
+@font-face{font-family:"Quattrocento Sans";font-weight:400;font-display:swap;src:url(marca/quattrocento-sans-400.woff2) format("woff2")}
+@font-face{font-family:"Quattrocento Sans";font-weight:700;font-display:swap;src:url(marca/quattrocento-sans-700.woff2) format("woff2")}
 /* Layout: oficina — painel 3D grande + ficha da peça; abaixo a folha de etiquetas como sai da fábrica */
 :root{
-  --bg:#f3f4f2; --panel:#ffffff; --ink:#1d2321; --muted:#5f6a66; --line:#d6dbd8;
-  --red:#d7263d; --mdf:#e9ecea; --orion:#c9a77c; --chip:#e7ece9; --label:#fffef8;
-  --sans:"Montserrat",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --bg:#f4f4f3; --panel:#ffffff; --ink:#111111; --muted:#5e5e5e; --line:#d9d9d7;
+  --red:#d7263d; --mdf:#e8e8e6; --orion:#c9a77c; --chip:#ededeb; --label:#fffef8;
+  --btn:#000000; --btnInk:#ffffff;
+  --sans:"Quattrocento Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   --mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#141817; --panel:#1d2321; --ink:#e8ecea; --muted:#9aa5a0; --line:#323b38;
-  --red:#ff4d5e; --mdf:#3a4340; --orion:#8a6d4c; --chip:#28302d; --label:#f6f4ea; color-scheme:dark}}
+  --bg:#0b0b0b; --panel:#171717; --ink:#f1f1f1; --muted:#a3a3a3; --line:#2e2e2e;
+  --red:#ff4d5e; --mdf:#3a3a3a; --orion:#8a6d4c; --chip:#242424; --label:#f6f4ea;
+  --btn:#ffffff; --btnInk:#000000; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#141817; --panel:#1d2321; --ink:#e8ecea; --muted:#9aa5a0; --line:#323b38;
-  --red:#ff4d5e; --mdf:#3a4340; --orion:#8a6d4c; --chip:#28302d; --label:#f6f4ea; color-scheme:dark}
+  --bg:#0b0b0b; --panel:#171717; --ink:#f1f1f1; --muted:#a3a3a3; --line:#2e2e2e;
+  --red:#ff4d5e; --mdf:#3a3a3a; --orion:#8a6d4c; --chip:#242424; --label:#f6f4ea;
+  --btn:#ffffff; --btnInk:#000000; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;
@@ -83,10 +94,37 @@ body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
 .desenho img{width:100%;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:zoom-in}
 .desenho.grande img{position:fixed;inset:0;z-index:40;width:100vw;height:100vh;object-fit:contain;border-radius:0;padding:16px;cursor:zoom-out}
 .desenho figcaption{font-size:.72rem;color:var(--muted);font-family:var(--mono)}
-.ler{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--red);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-size:1rem;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.ler{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--btn);color:var(--btnInk);border:0;border-radius:999px;padding:14px 26px;font-size:1.05rem;font-weight:700;letter-spacing:.02em;box-shadow:0 6px 18px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.ler svg,.grande-ler svg{width:22px;height:22px;flex:none}
+/* Barra da marca Romanzza (todas as telas) */
+.marca{background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:-16px calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+.marca a{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+.marca img{height:22px;width:auto;display:block}
+.marca span{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:#cfcfcf;border-left:1px solid #555;padding-left:12px}
+.marca small{font-size:.68rem;color:#9a9a9a;letter-spacing:.04em}
+body.montador .marca{margin-top:0;margin-bottom:-12px}
+body.montador .view{max-width:none}
+/* Tela de entrada do montador: só a marca e um botão */
+.inicio{display:none}
+body.entrada{background:#000;color:#fff;padding-bottom:16px}
+body.entrada .wrap,body.entrada .ler{display:none!important}
+body.entrada .inicio{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:28px;min-height:calc(100svh - 32px);text-align:center;padding-top:env(safe-area-inset-top,0px)}
+.inicio .logo{width:min(260px,70vw);height:auto;margin-top:8vh}
+.inicio .sub{font-size:.8rem;letter-spacing:.32em;text-transform:uppercase;color:#bdbdbd;margin:14px 0 0}
+.inicio h1{font-size:clamp(1.7rem,7vw,2.3rem);font-weight:400;line-height:1.15;margin:0;color:#fff}
+.grande-ler{background:#fff;color:#000;border:0;border-radius:999px;font-size:1.25rem;font-weight:700;padding:20px 34px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(255,255,255,.12);cursor:pointer}
+.grande-ler:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.passos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;max-width:340px;text-align:left;font-size:1rem;color:#e6e6e6}
+.passos li{display:flex;gap:12px;align-items:flex-start}
+.passos b{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid #777;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff}
+.instalar{font-size:.85rem;color:#bdbdbd;max-width:340px;margin:0}
+.instalar button{background:transparent;color:#fff;border:1px solid #777;border-radius:999px;padding:10px 18px;font-size:.9rem}
+.assina{font-size:.72rem;color:#8a8a8a;letter-spacing:.04em;margin:0}
+.scan .logo{height:20px;width:auto;opacity:.9}
 .ler:hover{filter:brightness(1.05)}
 body{padding-bottom:84px}
-.scan{position:fixed;inset:0;z-index:30;background:rgba(10,12,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.scan{position:fixed;inset:0;z-index:30;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .scan video{width:100%;max-width:520px;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#000;border:2px solid var(--red)}
 .scan p{color:#e8ecea;margin:0;text-align:center;max-width:520px;font-size:.92rem}
 .scan form{display:flex;gap:8px;width:100%;max-width:520px}
@@ -96,7 +134,23 @@ body{padding-bottom:84px}
 </style>
 </head>
 <body>
+<section class="inicio" id="inicio" aria-labelledby="tInicio">
+  <div>
+    <img class="logo" src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77">
+    <p class="sub">Montagem</p>
+  </div>
+  <h1 id="tInicio">Onde vai esta peça?</h1>
+  <button class="grande-ler" id="bLerInicio" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 8v8M10 8v8M13 8v8M16 8v8"/></svg>Ler etiqueta</button>
+  <ol class="passos">
+    <li><b>1</b><span>Toque em <strong>Ler etiqueta</strong>.</span></li>
+    <li><b>2</b><span>Na primeira vez, toque em <strong>Permitir</strong> para usar a câmera.</span></li>
+    <li><b>3</b><span>Aponte para o código de barras da <strong>etiqueta laranja</strong> da peça.</span></li>
+  </ol>
+  <p class="instalar" id="instalar"><button id="bInstalar" type="button" hidden>Colocar o ícone no celular</button><span id="dicaInstalar"></span></p>
+  <p class="assina">Tecnologia Agile Solution</p>
+</section>
 <div class="wrap">
+  <div class="marca"><a href="./" aria-label="Romanzza Montagem, início"><img src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77"><span>Montagem</span></a><small>Agile Solution</small></div>
   <header>
     <div>
       <div class="eyebrow">Protótipo · pedidos reais da Romanzza</div>
@@ -127,7 +181,7 @@ body{padding-bottom:84px}
     </aside>
   </section>
 
-  <p class="rodape">Protótipo Agile Solution · posição montada por regra a partir do XML do pedido</p>
+  <p class="rodape">Romanzza Montagem · tecnologia Agile Solution</p>
 
   <section class="etiquetas" style="display:flex;flex-direction:column;gap:10px">
     <div class="chips" id="pedidos"></div>
@@ -138,8 +192,9 @@ body{padding-bottom:84px}
   </section>
 </div>
 
-<button class="ler" id="bLer" type="button">Ler etiqueta</button>
+<button class="ler" id="bLer" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M7 8v8M10 8v8M13 8v8M16 8v8"/></svg><span id="bLerTxt">Ler etiqueta</span></button>
 <div class="scan" id="scan" hidden>
+  <img class="logo" src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77">
   <video id="scanVideo" muted playsinline></video>
   <p id="scanMsg">Aponte a câmera para o código de barras da etiqueta laranja.</p>
   <form id="fDigitar">

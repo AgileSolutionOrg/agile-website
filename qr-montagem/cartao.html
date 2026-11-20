@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartão do montador | Romanzza Montagem</title>
+<!-- Cartão para imprimir: o único QR que o montador lê com a câmera do celular, uma vez. Vai junto do manual/caixa de ferragens. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="marca/favicon-32.png" sizes="32x32">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; upgrade-insecure-requests">
+<style>
+@font-face{font-family:"Quattrocento Sans";font-weight:400;font-display:swap;src:url(marca/quattrocento-sans-400.woff2) format("woff2")}
+@font-face{font-family:"Quattrocento Sans";font-weight:700;font-display:swap;src:url(marca/quattrocento-sans-700.woff2) format("woff2")}
+:root{--bg:#e9e9e7;--ink:#111}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b1b;--ink:#eee}}
+:root[data-theme="dark"]{--bg:#1b1b1b;--ink:#eee}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Quattrocento Sans",Arial,sans-serif;display:flex;flex-direction:column;align-items:center;gap:20px;padding:24px 16px}
+.acao{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:.9rem;max-width:560px;text-align:center}
+.acao button{font:inherit;font-weight:700;background:#000;color:#fff;border:0;border-radius:999px;padding:10px 20px;cursor:pointer}
+/* cartão 9 × 13 cm */
+.cartao{width:9cm;height:13cm;background:#000;color:#fff;border-radius:6mm;padding:9mm 8mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cartao .logo{width:5.4cm;height:auto}
+.cartao .sub{font-size:9pt;letter-spacing:.32em;text-transform:uppercase;color:#bdbdbd;margin:2mm 0 0}
+.cartao h1{font-size:17pt;font-weight:400;line-height:1.15;margin:0}
+.qr{background:#fff;padding:3mm;border-radius:3mm;width:4.6cm;height:4.6cm}
+.qr img,.qr canvas{width:100%!important;height:100%!important;display:block}
+.cartao ol{margin:0;padding:0;list-style:none;font-size:9.5pt;line-height:1.35;text-align:left;display:flex;flex-direction:column;gap:1.6mm;color:#e6e6e6}
+.cartao ol b{display:inline-block;width:4.6mm;color:#fff}
+.cartao .assina{font-size:7pt;color:#8a8a8a;margin:0}
+@media print{@page{size:A4;margin:12mm}body{background:#fff;padding:0}.acao{display:none}.cartao{box-shadow:none}}
+</style>
+</head>
+<body>
+<p class="acao">Este é o único QR que o montador precisa ler com a câmera do celular, uma vez só. Depois o próprio site lê as etiquetas laranjas. <button id="bImprimir" type="button">Imprimir</button></p>
+<div class="cartao">
+  <div>
+    <img class="logo" src="marca/romanzza-logo-branco.png" alt="Romanzza" width="522" height="77">
+    <p class="sub">Montagem</p>
+  </div>
+  <h1>Aponte a câmera<br>do celular aqui</h1>
+  <div class="qr" id="qr" data-url="https://agilesolution.com.br/qr-montagem/?ler"></div>
+  <ol>
+    <li><b>1</b>Toque no link que aparece.</li>
+    <li><b>2</b>Toque em <strong>Permitir</strong> a câmera.</li>
+    <li><b>3</b>Leia a etiqueta laranja de cada peça.</li>
+  </ol>
+  <p class="assina">Tecnologia Agile Solution</p>
+</div>
+<script src="vendor/qrcode.min.js"></script>
+<script src="cartao.js"></script>
+</body>
+</html>
