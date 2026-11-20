@@ -1,5 +1,5 @@
 "use strict";
-// QR de Montagem — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
+// Romanzza Montagem (antes "QR de Montagem") — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
 // Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pelo QR).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
 const PEDIDOS = ["120949", "121570", "121694", "121709"];
@@ -120,6 +120,10 @@ function ficha(p) {
     .map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
 }
 async function render() {
+  // sem endereço = tela de entrada do montador (marca Romanzza + um botão)
+  const entrada = !/^#\d+/.test(location.hash);
+  document.body.classList.toggle("entrada", entrada);
+  if (entrada) { document.body.classList.remove("montador"); document.title = "Romanzza Montagem"; return; }
   const n = pedidoAtual();
   try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou o QR da etiqueta."; return; }
   let id = pecaAtual(); const cb = etiquetaAtual();
@@ -163,7 +167,8 @@ async function render() {
   if (temDes) { $("#desenhoImg").src = "desenhos/" + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
   $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
-  document.title = sel ? `${sel.nome} | Onde vai esta peça` : "QR de Montagem | Agile Solution";
+  document.title = sel ? `${sel.nome} | Romanzza Montagem` : "Romanzza Montagem";
+  $("#bLerTxt").textContent = mont ? "Ler outra etiqueta" : "Ler etiqueta";
   paint();
   if (!mont) folha();
 }
@@ -214,7 +219,7 @@ async function abrirEtiqueta(txt) {
 }
 let leitor = null;
 async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
-$("#bLer").onclick = async () => {
+const abrirLeitor = async () => {
   $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
   try {
     const hints = new Map();
@@ -232,5 +237,21 @@ $("#bFechar").onclick = fecharLeitor;
 $("#desenhoImg").addEventListener("error", () => { $("#desenho").hidden = true; });
 $("#desenhoImg").addEventListener("click", () => $("#desenho").classList.toggle("grande"));
 $("#fDigitar").addEventListener("submit", async e => { e.preventDefault(); if (await abrirEtiqueta($("#iCodigo").value)) { await fecharLeitor(); scrollTo({ top: 0 }); } });
+$("#bLer").onclick = abrirLeitor;
+$("#bLerInicio").onclick = abrirLeitor;
+
+// ---------- vira "app" no celular: ícone na tela inicial e funciona com sinal fraco ----------
+const instalado = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+let pedidoInstalar = null;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); pedidoInstalar = e; $("#bInstalar").hidden = false; $("#dicaInstalar").textContent = ""; });
+$("#bInstalar").onclick = async () => { if (!pedidoInstalar) return; pedidoInstalar.prompt(); await pedidoInstalar.userChoice.catch(() => null); pedidoInstalar = null; $("#bInstalar").hidden = true; };
+if (!instalado && /iPhone|iPad|iPod/.test(navigator.userAgent)) $("#dicaInstalar").textContent = "Para deixar o ícone no iPhone: toque em Compartilhar e depois em “Adicionar à Tela de Início”.";
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { /* sem cache offline */ });
+
+// QR do site no computador: o celular abre já com a câmera
+const qrL = document.getElementById("qrLanding");
+if (qrL && matchMedia("(min-width: 900px)").matches) { try { new QRCode(qrL, { text: qrL.dataset.url, width: 256, height: 256, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { /* sem QR */ } }
 
 render();
+// aberto pelo ícone instalado ou pelo QR do cartão (?ler): já abre a câmera
+if (new URLSearchParams(location.search).has("ler") && !location.hash) abrirLeitor();
