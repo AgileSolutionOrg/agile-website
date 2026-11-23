@@ -2,7 +2,7 @@
 // Romanzza Montagem (antes "QR de Montagem") — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
 // Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pela etiqueta).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
-const PEDIDOS = ["120949", "121570", "121694", "121709"];
+const PEDIDOS = ["120949", "120407", "121570", "121694", "121709"];
 
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -199,7 +199,7 @@ function folha() {
       <div class="lbl-top"><span>ROMANZZA</span><span>PED ${ped.pedido}</span></div>
       <div class="t">${esc(p.desc)}</div>
       <div class="lbl-info">${esc(m.nome)} · ${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
-      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só no pedido 120949</div>`}
+      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só nos pedidos 120949 e 120407</div>`}
     </div>`;
   };
   $("#sheet").innerHTML =
