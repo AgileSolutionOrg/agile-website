@@ -2,7 +2,15 @@
 // Romanzza Montagem (antes "QR de Montagem") — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
 // Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pela etiqueta).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
-const PEDIDOS = ["120949", "120407", "121570", "121694", "121709"];
+const PEDIDOS = ["120949", "120407", "120252", "121570", "121694", "121709"];   // exemplos fixos (pedidos/*.json)
+// Todos os outros pedidos vêm do Agile Portal: o agente da Agile na Romanzza prepara cada pedido e cada etiqueta
+// assim que são gerados no Focco, e o portal responde (funciona mesmo com a fábrica fora do ar).
+const API = "https://portal.agilesolution.com.br/pub/montagem/romanzza/";
+const doPortal = n => !PEDIDOS.includes(String(n));
+const alvos = {};   // etiqueta → peça, das consultas ao portal
+async function consultar(codigo) {
+  try { const r = await fetch(API + "etiqueta/" + encodeURIComponent(codigo)); return r.ok ? await r.json() : null; } catch (e) { return null; }
+}
 
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -96,8 +104,9 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 // ---------- dados ----------
 async function carregar(n) {
   if (!cache[n]) {
-    const r = await fetch("pedidos/" + n + ".json"); if (!r.ok) throw new Error("pedido " + n + " não encontrado");
-    const d = await r.json();
+    const r = await fetch(doPortal(n) ? API + "pedido/" + encodeURIComponent(n) : "pedidos/" + n + ".json");
+    if (!r.ok) throw new Error("pedido " + n + " não encontrado");
+    const d = await r.json(); d.etiquetas = d.etiquetas || {};
     const grupos = {}; // peças iguais (mesma descrição e medida) → "3 de 14 iguais"
     d.moveis.forEach(m => m.pecas.forEach(p => { const k = p.desc + "|" + p.dim; (grupos[k] = grupos[k] || []).push(p); }));
     Object.values(grupos).forEach(l => l.forEach((p, i) => { p.iguais = l.length; p.iguaisN = i + 1; }));
@@ -129,7 +138,8 @@ async function render() {
   let id = pecaAtual(); const cb = etiquetaAtual();
   sel = null; movel = null; grupoSel = []; aviso = "";
   if (cb) {
-    const alvo = (ped.etiquetas || {})[cb];
+    let alvo = (ped.etiquetas || {})[cb] || alvos[cb];
+    if (!alvo && doPortal(n)) { const e = await consultar(cb); if (e && String(e.pedido) === String(n)) alvo = alvos[cb] = String(e.alvo); }
     const todas = ped.moveis.flatMap(m => m.pecas);
     if (alvo && todas.some(p => p.id === alvo)) id = alvo;
     else if (alvo && todas.some(p => (p.anc || []).includes(alvo))) {
@@ -164,7 +174,7 @@ async function render() {
   // desenho técnico da peça (o mesmo .bmp da etiqueta de produção, convertido em PNG)
   const temDes = !!(sel && sel.des && /^[A-Z_]+\d+[A-Z]$/.test(sel.des));
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
-  if (temDes) { $("#desenhoImg").src = "desenhos/" + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
+  if (temDes) { $("#desenhoImg").src = (doPortal(ped.pedido) ? API + "desenho/" : "desenhos/") + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
   $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
   document.title = sel ? `${sel.nome} | Romanzza Montagem` : "Romanzza Montagem";
@@ -199,7 +209,7 @@ function folha() {
       <div class="lbl-top"><span>ROMANZZA</span><span>PED ${ped.pedido}</span></div>
       <div class="t">${esc(p.desc)}</div>
       <div class="lbl-info">${esc(m.nome)} · ${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
-      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só nos pedidos 120949 e 120407</div>`}
+      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : (doPortal(ped.pedido) ? "" : `<div class="lbl-sem">etiqueta real só nos pedidos 120949, 120407 e 120252</div>`)}
     </div>`;
   };
   $("#sheet").innerHTML =
@@ -222,20 +232,40 @@ $("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target
 
 // ---------- ler a etiqueta que a fábrica já imprime (código de barras do Focco) ----------
 async function abrirEtiqueta(txt) {
-  const cb = String(txt || "").replace(/\D/g, "");
+  txt = String(txt || "").trim();
+  // etiqueta branca de produção: o QR/DataMatrix traz o programa da CNC = código do desenho da peça (ex. STA00095708A.bpp)
+  const des = (txt.match(/([A-Z_]{2,}\d{4,}[A-Z])(?:\.\w+)?/i) || [])[1];
+  if (des && !/^\d+$/.test(txt)) {
+    const D = des.toUpperCase();
+    // o mesmo desenho (ex. prateleira padrão) existe em vários pedidos: primeiro o pedido que já está aberto
+    const aberto = (location.hash.match(/^#(\d+)/) || [])[1];
+    for (const pd of [...new Set([aberto, ...Object.keys(cache), ...PEDIDOS].filter(Boolean))]) {
+      const d = await carregar(pd).catch(() => null); if (!d) continue;
+      const p = d.moveis.flatMap(m => m.pecas).find(x => (x.des || "").toUpperCase() === D);
+      if (p) { location.hash = pd + "-p" + p.id; return true; }
+    }
+    const e = await consultar(D);
+    if (e && e.pedido) { location.hash = e.pedido + "-p" + e.alvo; return true; }
+    $("#scanMsg").textContent = "Não achei a peça do desenho " + D + ". Leia o código de barras ou digite o número da etiqueta.";
+    return false;
+  }
+  const cb = (txt.match(/\d{8,}/) || [txt.replace(/\D/g, "")])[0];
   if (!cb) return false;
   const n = cb.padStart(10, "0");
   for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
-  $("#scanMsg").textContent = "Etiqueta " + n + " não está nos pedidos deste protótipo (" + PEDIDOS.join(", ") + ").";
+  $("#scanMsg").textContent = "Consultando a etiqueta " + n + "…";
+  const e = await consultar(n);
+  if (e && e.pedido) { alvos[n] = String(e.alvo); location.hash = e.pedido + (e.tipo === "D" ? "-p" + e.alvo : "-e" + n); return true; }
+  $("#scanMsg").textContent = e === null && !navigator.onLine ? "Sem internet para consultar a etiqueta " + n + "." : "Etiqueta " + n + " não encontrada. Confira o número ou leia de novo.";
   return false;
 }
 let leitor = null;
 async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
 const abrirLeitor = async () => {
-  $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
+  $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código da etiqueta (barras, QR ou DataMatrix).";
   try {
     const hints = new Map();
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE]);
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE, ZXing.BarcodeFormat.DATA_MATRIX]);
     leitor = new ZXing.BrowserMultiFormatReader(hints);
     await leitor.decodeFromConstraints({ video: { facingMode: "environment" } }, $("#scanVideo"), async r => {
       if (!r) return;
