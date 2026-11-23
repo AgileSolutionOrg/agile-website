@@ -139,7 +139,7 @@ async function render() {
   document.body.classList.toggle("entrada", entrada);
   if (entrada) { document.body.classList.remove("montador"); document.title = "Romanzza Montagem"; return; }
   const n = pedidoAtual();
-  try { ped = await carregar(n); } catch (e) { $("#avisoOrigem").hidden = true; $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
+  try { ped = await carregar(n); } catch (e) { $("#avisoOrigem").hidden = true; $("#avisoAssist").hidden = true; $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
   let id = pecaAtual(); const cb = etiquetaAtual();
   sel = null; movel = null; grupoSel = []; aviso = "";
   if (cb) {
@@ -178,6 +178,10 @@ async function render() {
   $("#ficha").innerHTML = sel ? ficha(sel) : "";
   // pedido sem XML do Builder: o agente montou o modelo só com o Focco (peças soltas, com as medidas reais)
   $("#avisoOrigem").hidden = !(sel && ped.origem === "focco");
+  // etiqueta de ASSISTÊNCIA TÉCNICA aberta no 3D do pedido original (o agente marca em ped.assistencias[etiqueta])
+  const assist = cb && ped.assistencias ? ped.assistencias[cb] : null;
+  $("#avisoAssist").hidden = !(sel && assist);
+  if (assist) $("#avisoAssist").textContent = "Assistência técnica · pedido " + assist + ". A peça aparece no móvel do pedido original " + ped.pedido + ".";
   // desenho técnico da peça (o mesmo .bmp da etiqueta de produção, convertido em PNG)
   const temDes = !!(sel && sel.des && /^[A-Z_]+\d+[A-Z]$/.test(sel.des));
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
