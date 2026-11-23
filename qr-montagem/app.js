@@ -2,7 +2,7 @@
 // Romanzza Montagem (antes "QR de Montagem") — lê o pedido gerado a partir do XML do Builder (pedidos/<n>.json) e mostra a peça no móvel.
 // Endereços: #<pedido> = folha do pedido; #<pedido>-p<idPeca> = modo montador (aberto pela etiqueta).
 const BASE_URL = "https://agilesolution.com.br/qr-montagem/";
-const PEDIDOS = ["120949", "120407", "121570", "121694", "121709"];
+const PEDIDOS = ["120949", "120407", "120252", "121570", "121694", "121709"];
 
 const $ = s => document.querySelector(s);
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -199,7 +199,7 @@ function folha() {
       <div class="lbl-top"><span>ROMANZZA</span><span>PED ${ped.pedido}</span></div>
       <div class="t">${esc(p.desc)}</div>
       <div class="lbl-info">${esc(m.nome)} · ${esc(p.dim)} mm<br>DES ${esc(p.des)}</div>
-      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só nos pedidos 120949 e 120407</div>`}
+      ${cb ? `<div class="lbl-bar">${barras(cb)}</div><div class="lbl-cb">${cb}</div>` : `<div class="lbl-sem">etiqueta real só nos pedidos 120949, 120407 e 120252</div>`}
     </div>`;
   };
   $("#sheet").innerHTML =
@@ -222,7 +222,20 @@ $("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target
 
 // ---------- ler a etiqueta que a fábrica já imprime (código de barras do Focco) ----------
 async function abrirEtiqueta(txt) {
-  const cb = String(txt || "").replace(/\D/g, "");
+  txt = String(txt || "").trim();
+  // etiqueta branca de produção: o QR/DataMatrix traz o programa da CNC = código do desenho da peça (ex. STA00095708A.bpp)
+  const des = (txt.match(/([A-Z_]{2,}\d{4,}[A-Z])(?:\.\w+)?/i) || [])[1];
+  if (des && !/^\d+$/.test(txt)) {
+    const D = des.toUpperCase();
+    for (const pd of PEDIDOS) {
+      const d = await carregar(pd).catch(() => null); if (!d) continue;
+      const p = d.moveis.flatMap(m => m.pecas).find(x => (x.des || "").toUpperCase() === D);
+      if (p) { location.hash = pd + "-p" + p.id; return true; }
+    }
+    $("#scanMsg").textContent = "Desenho " + D + " não está nos pedidos deste protótipo (" + PEDIDOS.join(", ") + ").";
+    return false;
+  }
+  const cb = (txt.match(/\d{8,}/) || [txt.replace(/\D/g, "")])[0];
   if (!cb) return false;
   const n = cb.padStart(10, "0");
   for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
@@ -232,10 +245,10 @@ async function abrirEtiqueta(txt) {
 let leitor = null;
 async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
 const abrirLeitor = async () => {
-  $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código de barras da etiqueta laranja.";
+  $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código da etiqueta (barras, QR ou DataMatrix).";
   try {
     const hints = new Map();
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE]);
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE, ZXing.BarcodeFormat.DATA_MATRIX]);
     leitor = new ZXing.BrowserMultiFormatReader(hints);
     await leitor.decodeFromConstraints({ video: { facingMode: "environment" } }, $("#scanVideo"), async r => {
       if (!r) return;
