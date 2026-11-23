@@ -94,6 +94,8 @@ body.montador .card{padding:14px 16px;gap:10px}
 body.montador .big{font-size:1.5rem}
 body.montador .where{font-size:1.08rem;line-height:1.4;padding:12px 14px}
 @media (min-width:761px){body.montador .stage{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}body.montador .view{height:72vh;margin-inline:0;border-radius:10px;border-top:1px solid var(--line)}}
+/* pedido sem XML do Builder (modelo montado pelo agente só com o Focco) */
+.origem{margin:0;font-size:.85rem;line-height:1.4;color:var(--muted);border-left:3px solid var(--orion);padding:6px 10px}
 .desenho{margin:0;display:flex;flex-direction:column;gap:4px}
 .desenho img{width:100%;max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px;cursor:zoom-in}
 .desenho.grande img{position:fixed;inset:0;z-index:40;width:100vw;height:100vh;object-fit:contain;border-radius:0;padding:16px;cursor:zoom-out}
@@ -332,6 +334,7 @@ body{padding-bottom:84px}
       <div class="eyebrow" id="cnt">Peça</div>
       <div class="big" id="nome">Toque numa peça ou leia uma etiqueta</div>
       <div class="where" id="onde">Leia a etiqueta laranja com a câmera do celular.</div>
+      <p class="origem" id="avisoOrigem" hidden>Este pedido chegou sem o projeto do Builder: mostramos a peça com as medidas e o desenho de produção; o lugar dela está no projeto da loja.</p>
       <figure class="desenho" id="desenho" hidden>
         <img id="desenhoImg" alt="Desenho técnico da peça: medidas, bordas e furação">
         <figcaption id="desenhoCap">Desenho da peça (o mesmo da etiqueta de produção)</figcaption>

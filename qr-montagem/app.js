@@ -8,8 +8,13 @@ const PEDIDOS = ["120949", "120407", "120252", "121570", "121694", "121709"];   
 const API = "https://portal.agilesolution.com.br/pub/montagem/romanzza/";
 const doPortal = n => !PEDIDOS.includes(String(n));
 const alvos = {};   // etiqueta → peça, das consultas ao portal
+// resposta: objeto = achou · null = o portal respondeu que não tem (404) · undefined = não deu para perguntar (sem internet, erro)
 async function consultar(codigo) {
-  try { const r = await fetch(API + "etiqueta/" + encodeURIComponent(codigo)); return r.ok ? await r.json() : null; } catch (e) { return null; }
+  try {
+    const r = await fetch(API + "etiqueta/" + encodeURIComponent(codigo));
+    if (r.ok) return await r.json();
+    return r.status === 404 ? null : undefined;
+  } catch (e) { return undefined; }
 }
 
 const $ = s => document.querySelector(s);
@@ -134,7 +139,7 @@ async function render() {
   document.body.classList.toggle("entrada", entrada);
   if (entrada) { document.body.classList.remove("montador"); document.title = "Romanzza Montagem"; return; }
   const n = pedidoAtual();
-  try { ped = await carregar(n); } catch (e) { $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
+  try { ped = await carregar(n); } catch (e) { $("#avisoOrigem").hidden = true; $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
   let id = pecaAtual(); const cb = etiquetaAtual();
   sel = null; movel = null; grupoSel = []; aviso = "";
   if (cb) {
@@ -171,6 +176,8 @@ async function render() {
   if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
   $(".view").hidden = !!(cb && !sel);
   $("#ficha").innerHTML = sel ? ficha(sel) : "";
+  // pedido sem XML do Builder: o agente montou o modelo só com o Focco (peças soltas, com as medidas reais)
+  $("#avisoOrigem").hidden = !(sel && ped.origem === "focco");
   // desenho técnico da peça (o mesmo .bmp da etiqueta de produção, convertido em PNG)
   const temDes = !!(sel && sel.des && /^[A-Z_]+\d+[A-Z]$/.test(sel.des));
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
@@ -235,28 +242,37 @@ async function abrirEtiqueta(txt) {
   txt = String(txt || "").trim();
   // etiqueta branca de produção: o QR/DataMatrix traz o programa da CNC = código do desenho da peça (ex. STA00095708A.bpp)
   const des = (txt.match(/([A-Z_]{2,}\d{4,}[A-Z])(?:\.\w+)?/i) || [])[1];
+  // ordem: 1) o pedido já aberto (instantâneo) · 2) o Agile Portal (conhece todos os pedidos) ·
+  // 3) os pedidos de exemplo fixos (só se o portal não achou ou não respondeu: assim funcionam sem internet)
+  const aberto = (location.hash.match(/^#(\d+)/) || [])[1];
+  const naoAberto = () => [...new Set([...Object.keys(cache), ...PEDIDOS])].filter(pd => pd !== aberto);
   if (des && !/^\d+$/.test(txt)) {
     const D = des.toUpperCase();
     // o mesmo desenho (ex. prateleira padrão) existe em vários pedidos: primeiro o pedido que já está aberto
-    const aberto = (location.hash.match(/^#(\d+)/) || [])[1];
-    for (const pd of [...new Set([aberto, ...Object.keys(cache), ...PEDIDOS].filter(Boolean))]) {
-      const d = await carregar(pd).catch(() => null); if (!d) continue;
-      const p = d.moveis.flatMap(m => m.pecas).find(x => (x.des || "").toUpperCase() === D);
-      if (p) { location.hash = pd + "-p" + p.id; return true; }
-    }
+    const peca = d => d && d.moveis.flatMap(m => m.pecas).find(x => (x.des || "").toUpperCase() === D);
+    if (aberto) { const p = peca(await carregar(aberto).catch(() => null)); if (p) { location.hash = aberto + "-p" + p.id; return true; } }
+    $("#scanMsg").textContent = "Consultando o desenho " + D + "…";
     const e = await consultar(D);
     if (e && e.pedido) { location.hash = e.pedido + "-p" + e.alvo; return true; }
-    $("#scanMsg").textContent = "Não achei a peça do desenho " + D + ". Leia o código de barras ou digite o número da etiqueta.";
+    for (const pd of naoAberto()) {
+      const p = peca(await carregar(pd).catch(() => null));
+      if (p) { location.hash = pd + "-p" + p.id; return true; }
+    }
+    $("#scanMsg").textContent = e === undefined && !navigator.onLine ? "Sem internet para consultar o desenho " + D + "."
+      : "Não achei a peça do desenho " + D + ". Leia o código de barras ou digite o número da etiqueta.";
     return false;
   }
   const cb = (txt.match(/\d{8,}/) || [txt.replace(/\D/g, "")])[0];
   if (!cb) return false;
   const n = cb.padStart(10, "0");
-  for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
+  if (aberto && cache[aberto] && cache[aberto].etiquetas[n]) { location.hash = aberto + "-e" + n; return true; }
   $("#scanMsg").textContent = "Consultando a etiqueta " + n + "…";
   const e = await consultar(n);
   if (e && e.pedido) { alvos[n] = String(e.alvo); location.hash = e.pedido + (e.tipo === "D" ? "-p" + e.alvo : "-e" + n); return true; }
-  $("#scanMsg").textContent = e === null && !navigator.onLine ? "Sem internet para consultar a etiqueta " + n + "." : "Etiqueta " + n + " não encontrada. Confira o número ou leia de novo.";
+  for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
+  $("#scanMsg").textContent = e === undefined && !navigator.onLine ? "Sem internet para consultar a etiqueta " + n + "."
+    : e === null ? "Etiqueta " + n + " ainda não está no sistema. Se o pedido é novo, tente de novo em alguns minutos."
+    : "Não consegui consultar a etiqueta " + n + " agora. Confira a internet e leia de novo.";
   return false;
 }
 let leitor = null;
