@@ -1,7 +1,8 @@
 // Romanzza Montagem: cache para obra com sinal fraco.
-// Rede primeiro (sempre a versão nova quando há sinal); sem sinal, usa o que já foi aberto antes.
+// Rede primeiro (sempre a versão nova quando há sinal; no-cache = pergunta ao servidor e ignora os 10 min de cache do Pages);
+// sem sinal, usa o que já foi aberto antes.
 // Escopo: só /qr-montagem/ (o resto do site não passa por aqui).
-const CACHE = "montagem-v2";
+const CACHE = "montagem-v3";
 const BASE = ["./", "index.html", "app.js", "manifest.webmanifest",
   "vendor/three.min.js", "vendor/zxing.min.js",
   "marca/romanzza-logo-branco.png", "marca/quattrocento-sans-400.woff2", "marca/quattrocento-sans-700.woff2",
@@ -14,7 +15,7 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const r = e.request;
   if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
-  e.respondWith(fetch(r).then(res => {
+  e.respondWith(fetch(r, { cache: "no-cache" }).then(res => {
     if (res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(r, copia)); }
     return res;
   }).catch(() => caches.match(r, { ignoreSearch: true })));
