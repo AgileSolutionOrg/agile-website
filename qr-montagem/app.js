@@ -121,8 +121,13 @@ async function carregar(n) {
     const r = await fetch(doPortal(n) ? API + "pedido/" + encodeURIComponent(n) : "pedidos/" + n + ".json");
     if (!r.ok) throw new Error("pedido " + n + " não encontrado");
     const d = await r.json(); d.etiquetas = d.etiquetas || {};
-    // contexto do pedido irmão: marca na peça ou no móvel inteiro ("outroPedido"); modelo antigo não tem o campo
-    d.moveis.forEach(m => m.pecas.forEach(p => { const o = p.outroPedido || m.outroPedido; if (o) p.ctx = String(o); }));
+    // contexto do pedido irmão ("outroPedido"): vale a marca da PEÇA (o agente marca cada peça do irmão; uma peça deste
+    // pedido sem a marca nunca vira fantasma). A marca do móvel só vale sozinha se nenhuma peça dele vier marcada.
+    // Modelo antigo não tem o campo: nada muda.
+    d.moveis.forEach(m => {
+      const algumaMarcada = m.pecas.some(p => p.outroPedido);
+      m.pecas.forEach(p => { const o = p.outroPedido || (!algumaMarcada && m.outroPedido); if (o) p.ctx = String(o); });
+    });
     const grupos = {}; // peças iguais (mesma descrição e medida) → "3 de 14 iguais" (só as do pedido)
     d.moveis.forEach(m => m.pecas.forEach(p => { if (ctx(p)) return; const k = p.desc + "|" + p.dim; (grupos[k] = grupos[k] || []).push(p); }));
     Object.values(grupos).forEach(l => l.forEach((p, i) => { p.iguais = l.length; p.iguaisN = i + 1; }));
