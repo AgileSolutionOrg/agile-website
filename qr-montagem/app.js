@@ -32,20 +32,28 @@ const cam = new THREE.PerspectiveCamera(35, 1, 10, 50000);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.85));
 const sun = new THREE.DirectionalLight(0xffffff, 0.6); sun.position.set(600, 1200, 1400); scene.add(sun);
 const grp = new THREE.Group(); scene.add(grp);
-let meshes = [], centro = new THREE.Vector3(), raio = 1000;
+let meshes = [], fantasmas = [], centro = new THREE.Vector3(), raio = 1000;
 const ehFrente = p => p && (p.tipo === "porta" || p.tipo === "frente");
 const corBase = p => (p && (ehFrente(p) || p.solo)) ? css("--orion") : css("--mdf");
+// Peça de CONTEXTO: do pedido irmão (mesmo projeto do Promob), só para mostrar o móvel onde a peça deste pedido entra.
+// O agente marca "outroPedido" na peça ou no móvel inteiro. Não conta, não tem etiqueta, não tem clique.
+const ctx = p => !!(p && p.ctx);
+const proprias = m => m.pecas.filter(p => !ctx(p));
 
 function montarCena() {
-  grp.clear(); meshes = [];
+  grp.clear(); meshes = []; fantasmas = [];
   const bb = new THREE.Box3();
   for (const p of movel.pecas.filter(q => q.box)) {
     const [x0, x1, y0, y1, z0, z1] = p.box;
     const g = new THREE.BoxGeometry(Math.max(x1 - x0, 1), Math.max(y1 - y0, 1), Math.max(z1 - z0, 1));
-    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: new THREE.Color(corBase(p)), transparent: true }));
+    const f = ctx(p);
+    // fantasma: translúcido, cor neutra, sem escrever profundidade (não esconde as peças do pedido atrás dele)
+    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: new THREE.Color(css("--mdf")), transparent: true,
+      opacity: f ? .16 : 1, depthWrite: !f }));
     m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
-    const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x4a5552, transparent: true, opacity: .55 }));
-    m.add(e); m.userData = { p, e }; grp.add(m); meshes.push(m); p.mesh = m;
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color: 0x4a5552, transparent: true, opacity: f ? .22 : .55 }));
+    m.add(e); m.userData = { p, e }; grp.add(m); p.mesh = m;
+    if (f) fantasmas.push(m); else { m.material.color.set(corBase(p)); meshes.push(m); }
     bb.expandByPoint(new THREE.Vector3(x0, y0, z0)); bb.expandByPoint(new THREE.Vector3(x1, y1, z1));
   }
   if (bb.isEmpty()) bb.set(new THREE.Vector3(0, 0, 0), new THREE.Vector3(500, 500, 500));
@@ -63,6 +71,7 @@ function paint() {
     if (ehFrente(p) && !isSel && (portasOcultas || (sel && !selEhFrente))) op = .12;
     m.material.opacity = op; m.material.depthWrite = op > .5; m.userData.e.material.opacity = op < .5 ? .15 : .55;
   }
+  for (const m of fantasmas) m.material.color.set(css("--mdf"));   // tema claro/escuro
 }
 
 let yaw = -0.55, pitch = 0.32, zoom = 1;
@@ -112,8 +121,15 @@ async function carregar(n) {
     const r = await fetch(doPortal(n) ? API + "pedido/" + encodeURIComponent(n) : "pedidos/" + n + ".json");
     if (!r.ok) throw new Error("pedido " + n + " não encontrado");
     const d = await r.json(); d.etiquetas = d.etiquetas || {};
-    const grupos = {}; // peças iguais (mesma descrição e medida) → "3 de 14 iguais"
-    d.moveis.forEach(m => m.pecas.forEach(p => { const k = p.desc + "|" + p.dim; (grupos[k] = grupos[k] || []).push(p); }));
+    // contexto do pedido irmão ("outroPedido"): vale a marca da PEÇA (o agente marca cada peça do irmão; uma peça deste
+    // pedido sem a marca nunca vira fantasma). A marca do móvel só vale sozinha se nenhuma peça dele vier marcada.
+    // Modelo antigo não tem o campo: nada muda.
+    d.moveis.forEach(m => {
+      const algumaMarcada = m.pecas.some(p => p.outroPedido);
+      m.pecas.forEach(p => { const o = p.outroPedido || (!algumaMarcada && m.outroPedido); if (o) p.ctx = String(o); });
+    });
+    const grupos = {}; // peças iguais (mesma descrição e medida) → "3 de 14 iguais" (só as do pedido)
+    d.moveis.forEach(m => m.pecas.forEach(p => { if (ctx(p)) return; const k = p.desc + "|" + p.dim; (grupos[k] = grupos[k] || []).push(p); }));
     Object.values(grupos).forEach(l => l.forEach((p, i) => { p.iguais = l.length; p.iguaisN = i + 1; }));
     cache[n] = d;
   }
@@ -139,13 +155,13 @@ async function render() {
   document.body.classList.toggle("entrada", entrada);
   if (entrada) { document.body.classList.remove("montador"); document.title = "Romanzza Montagem"; return; }
   const n = pedidoAtual();
-  try { ped = await carregar(n); } catch (e) { $("#avisoOrigem").hidden = true; $("#avisoAssist").hidden = true; $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
+  try { ped = await carregar(n); } catch (e) { $("#avisoOrigem").hidden = true; $("#avisoAssist").hidden = true; $("#avisoIrmao").hidden = true; $("#nome").textContent = "Pedido não encontrado"; $("#onde").textContent = "Confira o link ou leia a etiqueta de novo."; return; }
   let id = pecaAtual(); const cb = etiquetaAtual();
   sel = null; movel = null; grupoSel = []; aviso = "";
   if (cb) {
     let alvo = (ped.etiquetas || {})[cb] || alvos[cb];
     if (!alvo && doPortal(n)) { const e = await consultar(cb); if (e && String(e.pedido) === String(n)) alvo = alvos[cb] = String(e.alvo); }
-    const todas = ped.moveis.flatMap(m => m.pecas);
+    const todas = ped.moveis.flatMap(m => proprias(m));   // peça do pedido irmão nunca é alvo de etiqueta
     if (alvo && todas.some(p => p.id === alvo)) id = alvo;
     else if (alvo && todas.some(p => (p.anc || []).includes(alvo))) {
       const f = todas.filter(p => (p.anc || []).includes(alvo)); id = f[0].id; grupoSel = f.map(p => p.id);
@@ -154,8 +170,9 @@ async function render() {
       ? "Etiqueta de \u201c" + ped.indice[alvo] + "\u201d. É ferragem, acessório ou gaveta que já vem montada: não tem lugar no móvel."
       : "Etiqueta do pedido " + ped.pedido + " sem peça com desenho.";
   }
-  if (id) for (const m of ped.moveis) { const p = m.pecas.find(q => q.id === id); if (p) { sel = p; movel = m; break; } }
-  if (!movel) movel = ped.moveis.find(m => m.caixa) || ped.moveis[0];
+  if (id) for (const m of ped.moveis) { const p = m.pecas.find(q => q.id === id && !ctx(q)); if (p) { sel = p; movel = m; break; } }
+  if (!movel) movel = ped.moveis.find(m => m.caixa && proprias(m).length) || ped.moveis.find(m => proprias(m).length) || ped.moveis[0];
+  const lst = proprias(movel);
   const mont = !!sel || !!cb;
   document.body.classList.toggle("montador", mont);
   $("#dFicha").open = !mont; $("#dLista").open = !mont; $("#dFicha").hidden = !sel;
@@ -169,8 +186,8 @@ async function render() {
   else if (t === "base_inf" || t === "rodape") { yaw = -0.45; pitch = 0.75; }
   else { yaw = -0.45; pitch = 0.5; }
   resize();
-  const idx = movel.pecas.indexOf(sel) + 1;
-  $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${movel.pecas.length}` : "");
+  const idx = lst.indexOf(sel) + 1;
+  $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${lst.length}` : "");
   $("#nome").textContent = sel ? sel.nome : "Leia a etiqueta da peça";
   $("#onde").textContent = aviso && !sel ? aviso : sel ? frasePosicao(sel) + (aviso ? " " + aviso : "") : "Ou toque numa etiqueta abaixo para simular a leitura.";
   if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
@@ -182,12 +199,17 @@ async function render() {
   const assist = cb && ped.assistencias ? ped.assistencias[cb] : null;
   $("#avisoAssist").hidden = !(sel && assist);
   if (assist) $("#avisoAssist").textContent = "Assistência técnica · pedido " + assist + ". A peça aparece no móvel do pedido original " + ped.pedido + ".";
+  // móvel montado com o pedido irmão (mesmo projeto do Promob): as peças dele aparecem apagadas, só de referência
+  const irmaos = [...new Set(movel.pecas.filter(ctx).map(p => p.ctx))];
+  $("#avisoIrmao").hidden = !irmaos.length;
+  if (irmaos.length) $("#avisoIrmao").textContent = (irmaos.length > 1 ? "Móveis dos pedidos " + irmaos.join(", ") : "Móveis do pedido " + irmaos[0])
+    + ", do mesmo projeto, para referência. As peças apagadas não são deste pedido.";
   // desenho técnico da peça (o mesmo .bmp da etiqueta de produção, convertido em PNG)
   const temDes = !!(sel && sel.des && /^[A-Z_]+\d+[A-Z]$/.test(sel.des));
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
   if (temDes) { $("#desenhoImg").src = (doPortal(ped.pedido) ? API + "desenho/" : "desenhos/") + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
-  $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
+  $("#lista").innerHTML = lst.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
   document.title = sel ? `${sel.nome} | Romanzza Montagem` : "Romanzza Montagem";
   $("#bLerTxt").textContent = mont ? "Ler outra etiqueta" : "Ler etiqueta";
   paint();
@@ -206,9 +228,10 @@ let folhaDe = null;
 function folha() {
   $("#pedidos").innerHTML = PEDIDOS.map(n => `<a href="#${n}" class="chip${n === ped.pedido ? " on" : ""}">Pedido ${n}</a>`).join("");
   const pc = v => Math.round(100 * v / Math.max(ped.total, 1));
-  $("#resumo").textContent = `${ped.total} peças · ${ped.em3d} montadas no móvel (${pc(ped.em3d)}%) · ${ped.soltas} peças do ambiente (${pc(ped.soltas)}%) · ${ped.moveis.filter(m => m.caixa).length} móveis`;
+  $("#resumo").textContent = `${ped.total} peças · ${ped.em3d} montadas no móvel (${pc(ped.em3d)}%) · ${ped.soltas} peças do ambiente (${pc(ped.soltas)}%) · ${ped.moveis.filter(m => m.caixa && proprias(m).length).length} móveis`;
   if (folhaDe === ped.pedido) return; folhaDe = ped.pedido;
-  const caixas = ped.moveis.filter(m => m.caixa), soltos = ped.moveis.filter(m => !m.caixa);
+  // folha de etiquetas: só as peças deste pedido (móvel só do pedido irmão não entra)
+  const caixas = ped.moveis.filter(m => m.caixa && proprias(m).length), soltos = ped.moveis.filter(m => !m.caixa && proprias(m).length);
   // etiqueta laranja como a fábrica já imprime: código de barras com o número da etiqueta (sem QR)
   const codigos = {};
   for (const [cb, alvo] of Object.entries(ped.etiquetas || {})) (codigos[alvo] = codigos[alvo] || []).push(cb);
@@ -224,8 +247,8 @@ function folha() {
     </div>`;
   };
   $("#sheet").innerHTML =
-    caixas.map(m => `<h3>${esc(m.nome)} <small>${Math.round(m.dims.W)} × ${Math.round(m.dims.H)} × ${Math.round(m.dims.D)} mm · ${m.pecas.length} peças</small></h3><div class="grade">${m.pecas.map(p => etiqueta(p, m)).join("")}</div>`).join("") +
-    (soltos.length ? `<h3>Peças do ambiente <small>painéis, ripas e vistas · ${soltos.length} peças</small></h3><div class="grade">${soltos.map(m => etiqueta(m.pecas[0], m)).join("")}</div>` : "");
+    caixas.map(m => `<h3>${esc(m.nome)} <small>${Math.round(m.dims.W)} × ${Math.round(m.dims.H)} × ${Math.round(m.dims.D)} mm · ${proprias(m).length} peças</small></h3><div class="grade">${proprias(m).map(p => etiqueta(p, m)).join("")}</div>`).join("") +
+    (soltos.length ? `<h3>Peças do ambiente <small>painéis, ripas e vistas · ${soltos.length} peças</small></h3><div class="grade">${soltos.map(m => etiqueta(proprias(m)[0], m)).join("")}</div>` : "");
 }
 // Code 128 (conjunto C, só dígitos): desenha o código de barras da etiqueta em SVG
 const C128 = "212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
