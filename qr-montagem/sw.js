@@ -2,7 +2,7 @@
 // Rede primeiro (sempre a versão nova quando há sinal; no-cache = pergunta ao servidor e ignora os 10 min de cache do Pages);
 // sem sinal, usa o que já foi aberto antes.
 // Escopo: só /qr-montagem/ (o resto do site não passa por aqui).
-const CACHE = "montagem-v4";
+const CACHE = "montagem-v5";
 // pedidos e desenhos do Agile Portal também ficam guardados: o montador abre de novo na obra sem sinal
 const PORTAL = "https://portal.agilesolution.com.br";
 const BASE = ["./", "index.html", "app.js", "manifest.webmanifest",
