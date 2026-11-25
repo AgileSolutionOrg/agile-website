@@ -172,6 +172,8 @@ async function render() {
   const idx = movel.pecas.indexOf(sel) + 1;
   $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${movel.pecas.length}` : "");
   $("#nome").textContent = sel ? sel.nome : "Leia a etiqueta da peça";
+  // medida da peça entre parênteses ao lado do nome (pedido do Rangel/PCP, 25/11)
+  if (sel && sel.dim) { const m = document.createElement("small"); m.className = "dimNome"; m.textContent = " (" + sel.dim + " mm)"; $("#nome").appendChild(m); }
   $("#onde").textContent = aviso && !sel ? aviso : sel ? frasePosicao(sel) + (aviso ? " " + aviso : "") : "Ou toque numa etiqueta abaixo para simular a leitura.";
   if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
   $(".view").hidden = !!(cb && !sel);
@@ -187,7 +189,7 @@ async function render() {
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
   if (temDes) { $("#desenhoImg").src = (doPortal(ped.pedido) ? API + "desenho/" : "desenhos/") + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
-  $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
+  $("#lista").innerHTML = movel.pecas.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.dim ? ` <small>(${esc(p.dim)})</small>` : ""}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
   document.title = sel ? `${sel.nome} | Romanzza Montagem` : "Romanzza Montagem";
   $("#bLerTxt").textContent = mont ? "Ler outra etiqueta" : "Ler etiqueta";
   paint();
