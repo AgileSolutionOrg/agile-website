@@ -189,6 +189,8 @@ async function render() {
   const idx = lst.indexOf(sel) + 1;
   $("#cnt").textContent = `Pedido ${ped.pedido} · ${movel.nome}` + (sel && !movel.solo ? ` · peça ${idx} de ${lst.length}` : "");
   $("#nome").textContent = sel ? sel.nome : "Leia a etiqueta da peça";
+  // medida da peça entre parênteses ao lado do nome (pedido do Rangel/PCP, 25/11)
+  if (sel && sel.dim) { const m = document.createElement("small"); m.className = "dimNome"; m.textContent = " (" + sel.dim + " mm)"; $("#nome").appendChild(m); }
   $("#onde").textContent = aviso && !sel ? aviso : sel ? frasePosicao(sel) + (aviso ? " " + aviso : "") : "Ou toque numa etiqueta abaixo para simular a leitura.";
   if (cb && !sel) $("#nome").textContent = "Etiqueta " + cb;
   $(".view").hidden = !!(cb && !sel);
@@ -209,7 +211,7 @@ async function render() {
   $("#desenho").hidden = !temDes; $("#desenho").classList.remove("grande");
   if (temDes) { $("#desenhoImg").src = (doPortal(ped.pedido) ? API + "desenho/" : "desenhos/") + sel.des + ".png"; $("#desenhoCap").textContent = "Desenho " + sel.des + " · toque para ampliar"; }
   $("#dLista").hidden = !!movel.solo;
-  $("#lista").innerHTML = lst.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
+  $("#lista").innerHTML = lst.map((p, i) => `<div class="row${sel === p ? " on" : ""}" tabindex="0" role="button" data-id="${p.id}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="sw" style="background:${sel === p ? "var(--red)" : ehFrente(p) || p.solo ? "var(--orion)" : "var(--mdf)"}"></span>${esc(p.nome)}${p.dim ? ` <small>(${esc(p.dim)})</small>` : ""}${p.box ? "" : " <small>(sem 3D)</small>"}</div>`).join("");
   document.title = sel ? `${sel.nome} | Romanzza Montagem` : "Romanzza Montagem";
   $("#bLerTxt").textContent = mont ? "Ler outra etiqueta" : "Ler etiqueta";
   paint();
@@ -265,8 +267,9 @@ $("#sheet").addEventListener("click", e => { const l = e.target.closest(".lbl");
 $("#sheet").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("lbl")) abrirLbl(e.target); });
 
 // ---------- ler a etiqueta que a fábrica já imprime (código de barras do Focco) ----------
-async function abrirEtiqueta(txt) {
+async function abrirEtiqueta(txt, sessao) {
   txt = String(txt || "").trim();
+  const vale = () => sessao === undefined || sessao === sessaoLeitor;   // leitura de uma sessão antiga do leitor não muda a tela
   // etiqueta branca de produção: o QR/DataMatrix traz o programa da CNC = código do desenho da peça (ex. STA00095708A.bpp)
   const des = (txt.match(/([A-Z_]{2,}\d{4,}[A-Z])(?:\.\w+)?/i) || [])[1];
   // ordem: 1) o pedido já aberto (instantâneo) · 2) o Agile Portal (conhece todos os pedidos) ·
@@ -277,13 +280,13 @@ async function abrirEtiqueta(txt) {
     const D = des.toUpperCase();
     // o mesmo desenho (ex. prateleira padrão) existe em vários pedidos: primeiro o pedido que já está aberto
     const peca = d => d && d.moveis.flatMap(m => m.pecas).find(x => (x.des || "").toUpperCase() === D);
-    if (aberto) { const p = peca(await carregar(aberto).catch(() => null)); if (p) { location.hash = aberto + "-p" + p.id; return true; } }
+    if (aberto) { const p = peca(await carregar(aberto).catch(() => null)); if (p) { if (!vale()) return false; location.hash = aberto + "-p" + p.id; return true; } }
     $("#scanMsg").textContent = "Consultando o desenho " + D + "…";
     const e = await consultar(D);
-    if (e && e.pedido) { location.hash = e.pedido + "-p" + e.alvo; return true; }
+    if (e && e.pedido) { if (!vale()) return false; location.hash = e.pedido + "-p" + e.alvo; return true; }
     for (const pd of naoAberto()) {
       const p = peca(await carregar(pd).catch(() => null));
-      if (p) { location.hash = pd + "-p" + p.id; return true; }
+      if (p) { if (!vale()) return false; location.hash = pd + "-p" + p.id; return true; }
     }
     $("#scanMsg").textContent = e === undefined && !navigator.onLine ? "Sem internet para consultar o desenho " + D + "."
       : "Não achei a peça do desenho " + D + ". Leia o código de barras ou digite o número da etiqueta.";
@@ -292,31 +295,45 @@ async function abrirEtiqueta(txt) {
   const cb = (txt.match(/\d{8,}/) || [txt.replace(/\D/g, "")])[0];
   if (!cb) return false;
   const n = cb.padStart(10, "0");
-  if (aberto && cache[aberto] && cache[aberto].etiquetas[n]) { location.hash = aberto + "-e" + n; return true; }
+  if (aberto && cache[aberto] && cache[aberto].etiquetas[n]) { if (!vale()) return false; location.hash = aberto + "-e" + n; return true; }
   $("#scanMsg").textContent = "Consultando a etiqueta " + n + "…";
   const e = await consultar(n);
-  if (e && e.pedido) { alvos[n] = String(e.alvo); location.hash = e.pedido + (e.tipo === "D" ? "-p" + e.alvo : "-e" + n); return true; }
-  for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { location.hash = pd + "-e" + n; return true; } }
+  if (e && e.pedido) { if (!vale()) return false; alvos[n] = String(e.alvo); location.hash = e.pedido + (e.tipo === "D" ? "-p" + e.alvo : "-e" + n); return true; }
+  for (const pd of PEDIDOS) { const d = await carregar(pd).catch(() => null); if (d && d.etiquetas && d.etiquetas[n]) { if (!vale()) return false; location.hash = pd + "-e" + n; return true; } }
   $("#scanMsg").textContent = e === undefined && !navigator.onLine ? "Sem internet para consultar a etiqueta " + n + "."
     : e === null ? "Etiqueta " + n + " ainda não está no sistema. Se o pedido é novo, tente de novo em alguns minutos."
     : "Não consegui consultar a etiqueta " + n + " agora. Confira a internet e leia de novo.";
   return false;
 }
 let leitor = null;
-async function fecharLeitor() { try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
+// Bug do "vai e volta" (produção, 25/11): a câmera chama o retorno a cada quadro. Com rede lenta, várias
+// consultas da MESMA etiqueta ficavam pendentes; quando o montador abria o leitor de novo, uma consulta
+// antiga terminava, voltava para a peça anterior e FECHAVA o leitor novo. Agora: cada abertura é uma
+// sessão; uma leitura por vez; retorno de sessão antiga é ignorado; a etiqueta já aberta não fecha o leitor.
+let sessaoLeitor = 0, lendo = false, ultimaLida = "", hashDaUltima = "";
+async function fecharLeitor() { sessaoLeitor++; lendo = false; try { if (leitor) leitor.reset(); } catch (e) { /* já fechado */ } leitor = null; $("#scan").hidden = true; }
 const abrirLeitor = async () => {
+  await fecharLeitor();
+  const sessao = sessaoLeitor;
   $("#scan").hidden = false; $("#iCodigo").value = ""; $("#scanMsg").textContent = "Aponte a câmera para o código da etiqueta (barras, QR ou DataMatrix).";
   try {
     const hints = new Map();
     hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39, ZXing.BarcodeFormat.ITF, ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.QR_CODE, ZXing.BarcodeFormat.DATA_MATRIX]);
     leitor = new ZXing.BrowserMultiFormatReader(hints);
     await leitor.decodeFromConstraints({ video: { facingMode: "environment" } }, $("#scanVideo"), async r => {
-      if (!r) return;
-      const txt = r.getText(); $("#scanMsg").textContent = "Lido: " + txt;
-      if (/agilesolution\.com\.br\/qr-montagem/.test(txt)) { await fecharLeitor(); location.href = txt; return; }
-      if (await abrirEtiqueta(txt)) { await fecharLeitor(); scrollTo({ top: 0 }); }
+      if (!r || lendo || sessao !== sessaoLeitor) return;
+      const txt = r.getText();
+      // a etiqueta que acabou de ser lida continua na frente da câmera: não volta para ela
+      if (txt === ultimaLida && location.hash === hashDaUltima) { $("#scanMsg").textContent = "Essa etiqueta já está aberta. Aponte para a próxima."; return; }
+      lendo = true; $("#scanMsg").textContent = "Lido: " + txt;
+      try {
+        if (/agilesolution\.com\.br\/qr-montagem/.test(txt)) { await fecharLeitor(); location.href = txt; return; }
+        const ok = await abrirEtiqueta(txt, sessao);
+        if (sessao !== sessaoLeitor) return;            // o leitor foi fechado ou reaberto enquanto consultava
+        if (ok) { ultimaLida = txt; hashDaUltima = location.hash; await fecharLeitor(); scrollTo({ top: 0 }); }
+      } finally { if (sessao === sessaoLeitor) lendo = false; }
     });
-  } catch (e) { $("#scanMsg").textContent = "Não consegui abrir a câmera (" + ((e && e.name) || "erro") + "). Digite o número da etiqueta abaixo."; }
+  } catch (e) { if (sessao === sessaoLeitor) $("#scanMsg").textContent = "Não consegui abrir a câmera (" + ((e && e.name) || "erro") + "). Digite o número da etiqueta abaixo."; }
 };
 $("#bFechar").onclick = fecharLeitor;
 $("#desenhoImg").addEventListener("error", () => { $("#desenho").hidden = true; });
